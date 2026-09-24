@@ -157,8 +157,6 @@ img { max-width: 100%; }
   color: var(--cian-texto);
 }
 
-.bd-wa-nav { padding: 9px 18px; font-size: 14px; }
-
 /* Botón hamburguesa, solo en móvil */
 .bd-menu-btn {
   display: none;
@@ -215,10 +213,10 @@ img { max-width: 100%; }
 }
 .bd-menu a.bd-menu-sub + a:not(.bd-menu-sub) { border-top: 1px solid var(--borde-nav); }
 
-@media (max-width: 860px) {
+/* Sin el botón de WhatsApp (24-sep-2026) los cinco enlaces caben hasta 700 px */
+@media (max-width: 700px) {
   .bd-navlinks { display: none; }
   .bd-menu-btn { display: flex; }
-  .bd-nav .bd-wa-nav { display: none; }
   .bd-menu:not([hidden]) { display: block; }
 }
 
@@ -680,16 +678,39 @@ main details > p { margin: -6px 0 0 !important; padding: 0 22px 18px; }
   .bd-footer h2 { margin-bottom: 4px; }
 }
 
-/* Enlace a la página propia del área, bajo su botón en servicios.html */
+/* Píldora a la página propia del área en servicios.html. Sustituyó al botón
+   de WhatsApp de cada área el 24-sep-2026; el flotante queda como único CTA */
 .bd-sv-ir {
-  display: block;
-  margin-top: 14px;
-  font-size: 14.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 22px;
+  border-radius: 999px;
+  background: var(--cian);
+  color: #fff;
+  font-size: 15px;
   font-weight: 600;
-  color: var(--cian-texto);
   text-decoration: none;
+  transition: background .15s, transform .15s, box-shadow .15s;
 }
-.bd-sv-ir:hover { text-decoration: underline; }
+.bd-sv-ir:hover {
+  background: var(--cian-hover);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 150, 176, .28);
+}
+.bd-sv-ir:focus-visible { outline: 2px solid var(--cian); outline-offset: 2px; }
+.bd-sv-pildoras { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+/* Con dos píldoras van apiladas y del mismo ancho; en laptops chicas la
+   segunda puede partirse en dos líneas y así se ven parejas */
+.bd-sv-pildoras:has(.bd-sv-ir-2) { align-items: stretch; max-width: 400px; }
+.bd-sv-pildoras:has(.bd-sv-ir-2) .bd-sv-ir { text-align: center; text-wrap: balance; }
+/* Segunda píldora de un área (REPSE lleva registro y cumplimiento): contorno cian */
+.bd-sv-ir-2 { background: #fff; color: var(--cian-texto); box-shadow: inset 0 0 0 1.5px var(--cian); }
+.bd-sv-ir-2:hover { background: var(--tinte); color: var(--cian-hover); }
+@media (max-width: 860px) {
+  .bd-sv-ir { display: flex; width: 100%; box-sizing: border-box; text-align: center; }
+}
 
 /* ---------------------------------------------------- páginas de servicio
    Una página por área (construir-servicios.py). Nació con REPSE el
@@ -707,6 +728,10 @@ main details > p { margin: -6px 0 0 !important; padding: 0 22px 18px; }
 .bd-sv-valor { font-size: 30px; font-weight: 700; color: var(--cian); line-height: 1.1; }
 .bd-sv-texto { font-size: 14.5px; line-height: 1.5; color: var(--gris-2); }
 .bd-sv-tile { text-align: left; }
+/* Datos del hero centrados a lo ancho, con los números alineados arriba
+   (opción B, 24-sep-2026). Los plazos siguen a la izquierda porque sus
+   textos son largos */
+.bd-sv-hero-datos .bd-sv-dato { align-items: center; text-align: center; }
 .bd-sv-riesgo {
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
@@ -917,6 +942,34 @@ main details > p { margin: -6px 0 0 !important; padding: 0 22px 18px; }
   50% { transform: translateY(-10px); }
 }
 .bd-js .bd-hero figure img { animation: bd-flotar 7s ease-in-out infinite; }
+/* Hero de Nosotros (24-sep-2026): foto de oficina aclarada detrás, a todo el
+   ancho de la ventana. Se desvanece a blanco del lado del texto; en una
+   columna, de arriba hacia abajo. main recorta el desborde de los 100vw */
+main { overflow-x: clip; }
+.bd-hero-fondo { position: relative; isolation: isolate; }
+.bd-hero-fondo::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 50vw);
+  right: calc(50% - 50vw);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0) 78%, #fff 100%),
+    linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, .94) 38%, rgba(255, 255, 255, .7) 66%, rgba(255, 255, 255, .58) 100%),
+    url(../img/nosotros-fondo.jpg) center right / cover no-repeat;
+}
+.bd-isotipo { display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto; }
+@media (max-width: 1000px) {
+  .bd-hero-fondo::before {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, .95) 0%, rgba(255, 255, 255, .88) 55%, rgba(255, 255, 255, .6) 100%),
+      url(../img/nosotros-fondo.jpg) 70% center / cover no-repeat;
+  }
+  .bd-isotipo { max-width: 300px; }
+}
+
 /* Video del hero: el blanco del video se funde con el de la página aunque la
    compresión lo altere un par de tonos */
 .bd-hero-video { mix-blend-mode: multiply; background: #fff; }
