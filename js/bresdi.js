@@ -67,11 +67,84 @@
 
   var estado = forma.querySelector(".bd-form-estado");
   var enviar = forma.querySelector('button[type="submit"]');
+  var medio = forma.querySelector('select[name="medio"]');
+  var contacto = forma.querySelector('input[name="contacto"]');
+  var ayuda = forma.querySelector(".bd-medio-ayuda");
+  var tarjeta = forma.closest(".bd-form-tarjeta");
+  var confirma = tarjeta && tarjeta.querySelector(".bd-confirma");
 
   function aviso(texto, tipo) {
     if (!estado) return;
     estado.textContent = texto;
     estado.setAttribute("data-tipo", tipo);
+  }
+
+  // El campo de contacto se adapta a lo elegido: teclado, autocompletado y ayuda
+  function ajustaMedio() {
+    if (!medio || !contacto) return;
+    var wa = medio.value === "WhatsApp";
+    contacto.type = wa ? "tel" : "email";
+    contacto.setAttribute("inputmode", wa ? "tel" : "email");
+    contacto.setAttribute("autocomplete", wa ? "tel-national" : "email");
+    contacto.placeholder = wa ? "442 123 4567" : "nombre@empresa.com";
+    if (ayuda) ayuda.textContent = wa ? "10 dígitos, sin lada internacional." : "Te escribimos a este correo.";
+  }
+  if (medio) {
+    medio.addEventListener("change", function () {
+      contacto.value = "";
+      ajustaMedio();
+      contacto.focus();
+    });
+    ajustaMedio();
+  }
+
+  function contactoValido() {
+    if (!medio || !contacto) return true;
+    var v = contacto.value.trim();
+    if (medio.value === "WhatsApp") {
+      var digitos = v.replace(/\D/g, "");
+      if (digitos.length === 12 && digitos.indexOf("52") === 0) digitos = digitos.slice(2);
+      return digitos.length === 10;
+    }
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  }
+
+  // Folio para identificar el caso: día y mes más cuatro caracteres al azar.
+  // Viaja en el asunto del correo que recibe Bresdi.
+  function nuevoFolio() {
+    var hoy = new Date();
+    var dos = function (n) { return (n < 10 ? "0" : "") + n; };
+    var letras = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", azar = "";
+    for (var i = 0; i < 4; i++) azar += letras.charAt(Math.floor(Math.random() * letras.length));
+    return "BR-" + dos(hoy.getDate()) + dos(hoy.getMonth() + 1) + "-" + azar;
+  }
+
+  function muestraConfirmacion(folio) {
+    if (!tarjeta || !confirma) {
+      forma.reset();
+      aviso("Mensaje enviado. Tu folio es " + folio + ". Te respondemos el siguiente día hábil.", "ok");
+      return;
+    }
+    confirma.querySelector("[data-folio]").textContent = folio;
+    var wa = confirma.querySelector(".bd-conf-wa");
+    if (wa) wa.href = wa.href.replace(/text=[^&]*/, "text=" + encodeURIComponent("Hola Bresdi, les dejé un mensaje en su sitio con el folio " + folio + "."));
+    var cambia = function () {
+      tarjeta.style.minHeight = tarjeta.offsetHeight + "px";
+      tarjeta.classList.remove("bd-saliendo");
+      tarjeta.classList.add("bd-enviado");
+      confirma.hidden = false;
+      confirma.classList.add("bd-conf-anima");
+      confirma.focus();
+      forma.reset();
+      ajustaMedio();
+    };
+    if (document.documentElement.classList.contains("bd-js")) {
+      tarjeta.style.minHeight = tarjeta.offsetHeight + "px";
+      tarjeta.classList.add("bd-saliendo");
+      setTimeout(cambia, 300);
+    } else {
+      cambia();
+    }
   }
 
   forma.addEventListener("submit", function (e) {
@@ -83,6 +156,19 @@
       aviso("El formulario todavía no está conectado. Escríbenos por WhatsApp mientras tanto.", "error");
       return;
     }
+    if (!contactoValido()) {
+      aviso(medio.value === "WhatsApp"
+        ? "Revisa tu número de WhatsApp: deben ser 10 dígitos."
+        : "Revisa tu correo: parece que le falta algo.", "error");
+      contacto.focus();
+      return;
+    }
+
+    var folio = nuevoFolio();
+    var campoFolio = forma.querySelector('input[name="folio"]');
+    var asunto = forma.querySelector('input[name="subject"]');
+    if (campoFolio) campoFolio.value = folio;
+    if (asunto) asunto.value = "Mensaje nuevo · Folio " + folio;
 
     if (enviar) {
       enviar.disabled = true;
@@ -101,8 +187,7 @@
         });
       })
       .then(function () {
-        forma.reset();
-        aviso("Mensaje enviado. Te respondemos el siguiente día hábil.", "ok");
+        muestraConfirmacion(folio);
       })
       .catch(function () {
         aviso("No se pudo enviar el mensaje. Escríbenos por WhatsApp y lo resolvemos.", "error");
