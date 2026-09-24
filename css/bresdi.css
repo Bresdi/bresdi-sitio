@@ -964,6 +964,7 @@ main details > p { margin: -6px 0 0 !important; padding: 0 22px 18px; }
   padding: 32px 0;
   box-sizing: border-box;
 }
+.bd-pasos-scroll .bd-pasos-interior { transform: scale(var(--pasos-escala, 1)); transform-origin: center; }
 .bd-pasos-scroll .bd-linea::before { transition: none; }
 .bd-pasos-scroll .bd-linea { transition: opacity .4s ease, transform .4s ease; }
 .bd-pasos-scroll .bd-linea.bd-paso-pendiente { opacity: .32; transform: translateY(10px); }
@@ -974,6 +975,8 @@ main details > p { margin: -6px 0 0 !important; padding: 0 22px 18px; }
    piezas al ritmo de la línea de cada paso. */
 .bd-esc-caja { width: 100%; container-type: inline-size; margin-bottom: 18px; }
 .bd-esc { position: relative; width: 100cqw; height: 75cqw; transform: scale(.86); }
+/* Chrome no debe usar las piezas animadas como ancla del scroll */
+.bd-esc, .bd-conf-escena { overflow-anchor: none; }
 .bd-esc img { position: absolute; display: block; max-width: none; }
 /* Paso 1: teléfono y burbujas */
 .bd-esc-tel { left: 32.08cqw; top: 6.5cqw; width: 35.83cqw; filter: drop-shadow(0 1.2cqw 1.6cqw rgba(0, 50, 70, .10)); }

@@ -320,13 +320,16 @@
 
   // Los tres pasos del Inicio: fijos en pantalla mientras avanzan con el scroll
   var pasos = document.getElementById("como");
-  var modoPasos = window.matchMedia("(min-width: 901px) and (min-height: 700px)");
   var lineasPasos = pasos ? pasos.querySelectorAll(".bd-linea") : [];
 
   if (pasos && lineasPasos.length) {
     var fijo = document.createElement("div");
     fijo.className = "bd-pasos-fijo";
-    while (pasos.firstChild) fijo.appendChild(pasos.firstChild);
+    // El interior se puede escalar un poco para caber en pantallas bajas
+    var interior = document.createElement("div");
+    interior.className = "bd-pasos-interior";
+    while (pasos.firstChild) interior.appendChild(pasos.firstChild);
+    fijo.appendChild(interior);
     pasos.appendChild(fijo);
 
     var pintaPasos = function () {
@@ -343,8 +346,23 @@
       });
     };
 
+    // Quedan fijos en pantallas amplias donde la sección cabe, escalada hasta
+    // el 80 % si hace falta. Antes se exigían 700 px de alto y muchas laptops
+    // con la escala de Windows quedaban fuera (24-sep-2026). Devuelve la
+    // escala, o 0 si no cabe.
+    var escalaPasos = function () {
+      if (window.innerWidth < 901) return 0;
+      // 64 px del relleno de la sección fija y 16 px de holgura
+      var necesita = interior.offsetHeight + 64 + 16;
+      var hay = window.innerHeight - (barra ? barra.offsetHeight : 0);
+      var escala = Math.min(1, hay / necesita);
+      return escala >= 0.8 ? escala : 0;
+    };
+
     var ajustaModo = function () {
-      var activo = modoPasos.matches;
+      var escala = escalaPasos();
+      var activo = escala > 0;
+      pasos.style.setProperty("--pasos-escala", activo ? escala.toFixed(3) : "1");
       pasos.classList.toggle("bd-pasos-scroll", activo);
       if (barra) pasos.style.setProperty("--nav-alto", barra.offsetHeight + "px");
       if (!activo) {
@@ -357,7 +375,9 @@
     };
 
     ajustaModo();
-    if (modoPasos.addEventListener) modoPasos.addEventListener("change", ajustaModo);
+    // Las fuentes y las imágenes pueden cambiar el alto de la sección al cargar
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajustaModo);
+    window.addEventListener("load", ajustaModo);
     window.addEventListener("scroll", pintaPasos, { passive: true });
     window.addEventListener("resize", ajustaModo);
   }
