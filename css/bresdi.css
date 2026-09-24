@@ -1,0 +1,959 @@
+/* Bresdi — hoja de estilos del sitio
+   Paleta de marca: cian #0096b0 y gris #555555 (Bresdi/estilo-corporativo.md).
+   Tipografía Poppins. Todo el sitio usa estas variables. */
+
+:root {
+  --cian: #0096b0;
+  --cian-texto: #007e96;
+  --cian-hover: #006678;
+  --tinte: #f1f8fa;
+  --borde-suave: #d5eaf0;
+  --borde-punteado: #a9d6e1;
+  --gris: #555555;
+  --gris-2: #6e7173;
+  --borde: #e3e6e8;
+  --borde-nav: #eceff1;
+  --wa: #25d366;
+  --wa-hover: #1ebe5b;
+}
+
+html { scroll-behavior: smooth; }
+section[id] { scroll-margin-top: 88px; }
+
+body {
+  margin: 0;
+  background: #ffffff;
+  color: var(--gris);
+  font-family: Poppins, system-ui, sans-serif;
+  text-wrap: pretty;
+}
+
+a { color: var(--cian-texto); }
+a:hover { color: var(--cian-hover); }
+
+img { max-width: 100%; }
+
+/* Salto al contenido, visible solo al tabular */
+.bd-saltar {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 50;
+  background: var(--cian);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 0 0 12px 0;
+  font-size: 14.5px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.bd-saltar:focus {
+  left: 0;
+  color: #fff;
+}
+
+/* ------------------------------------------------------------------ nav */
+.bd-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, .92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--borde-nav);
+}
+.bd-nav-fila {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px clamp(20px, 5vw, 72px);
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.bd-logo { display: flex; align-items: center; }
+.bd-logo img { height: 34px; width: auto; display: block; }
+
+.bd-navlinks {
+  display: flex;
+  gap: 26px;
+  margin-left: auto;
+  font-size: 14.5px;
+  font-weight: 500;
+}
+.bd-navlinks a {
+  text-decoration: none;
+  color: var(--gris);
+  font-weight: 500;
+}
+.bd-navlinks a:hover { color: var(--cian-texto); }
+.bd-navlinks a.bd-activo { color: var(--cian-texto); font-weight: 600; }
+.bd-navlinks a:focus-visible,
+.bd-menu a:focus-visible {
+  outline: 2px solid var(--cian);
+  outline-offset: 3px;
+}
+
+/* Desplegable de Servicios (23-sep-2026): se abre al pasar el cursor, con
+   el teclado o con el botón de la flecha (js/bresdi.js) */
+.bd-drop { position: relative; display: flex; align-items: center; gap: 2px; }
+.bd-drop-btn {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--gris);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bd-drop-btn svg { transition: transform .18s; }
+.bd-drop-btn:focus-visible { outline: 2px solid var(--cian); outline-offset: 2px; }
+.bd-drop-panel {
+  position: absolute;
+  top: calc(100% + 18px);
+  left: -24px;
+  width: 360px;
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid var(--borde-suave);
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgba(40, 50, 55, .12);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity .16s, transform .16s, visibility .16s;
+}
+/* Puente invisible para que el cursor llegue al panel sin cerrarlo */
+.bd-drop-panel::before { content: ""; position: absolute; left: 0; right: 0; top: -20px; height: 20px; }
+.bd-drop:hover .bd-drop-panel,
+.bd-drop:focus-within .bd-drop-panel,
+.bd-drop.bd-abierto .bd-drop-panel { opacity: 1; visibility: visible; transform: none; }
+.bd-drop:hover .bd-drop-btn svg,
+.bd-drop.bd-abierto .bd-drop-btn svg { transform: rotate(180deg); }
+.bd-drop-panel a {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--gris);
+}
+.bd-drop-panel a:hover, .bd-drop-panel a:focus-visible { background: var(--tinte); color: var(--gris); outline: none; }
+.bd-drop-panel .bd-serv-ico { width: 40px; height: 40px; border-radius: 12px; box-shadow: none; }
+.bd-drop-panel b { display: block; font-size: 14.5px; font-weight: 600; }
+.bd-drop-panel small { display: block; font-size: 12.5px; line-height: 1.45; color: var(--gris-2); margin-top: 2px; }
+.bd-drop-panel .bd-drop-todos {
+  border-top: 1px solid var(--borde-nav);
+  border-radius: 0 0 10px 10px;
+  margin-top: 4px;
+  padding: 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--cian-texto);
+}
+
+.bd-wa-nav { padding: 9px 18px; font-size: 14px; }
+
+/* Botón hamburguesa, solo en móvil */
+.bd-menu-btn {
+  display: none;
+  margin-left: auto;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.bd-menu-btn span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--gris);
+  transition: transform .18s, opacity .18s;
+}
+.bd-menu-btn:focus-visible { outline: 2px solid var(--cian); outline-offset: 2px; }
+.bd-menu-btn[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.bd-menu-btn[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.bd-menu-btn[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.bd-menu {
+  display: none;
+  border-top: 1px solid var(--borde-nav);
+  padding: 8px clamp(20px, 5vw, 72px) 16px;
+  background: #fff;
+}
+.bd-menu a {
+  display: block;
+  padding: 13px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--gris);
+  text-decoration: none;
+  border-bottom: 1px solid var(--borde-nav);
+}
+.bd-menu a:last-child { border-bottom: 0; }
+.bd-menu a.bd-activo { color: var(--cian-texto); font-weight: 600; }
+/* Áreas de servicio bajo "Servicios" en el menú móvil */
+.bd-menu a.bd-menu-sub {
+  padding: 10px 0 10px 18px;
+  font-size: 15px;
+  color: var(--gris-2);
+  border-bottom: 0;
+  border-left: 2px solid var(--borde-suave);
+}
+.bd-menu a.bd-menu-sub + a:not(.bd-menu-sub) { border-top: 1px solid var(--borde-nav); }
+
+@media (max-width: 860px) {
+  .bd-navlinks { display: none; }
+  .bd-menu-btn { display: flex; }
+  .bd-nav .bd-wa-nav { display: none; }
+  .bd-menu:not([hidden]) { display: block; }
+}
+
+/* -------------------------------------------------------------- rejillas */
+.bd-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 48px;
+  align-items: center;
+}
+.bd-2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px 48px;
+}
+.bd-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.bd-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+}
+.bd-split {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 24px 48px;
+  align-items: center;
+}
+.bd-cta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px 48px;
+  align-items: center;
+}
+.bd-post {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
+  gap: 56px;
+  align-items: start;
+}
+/* La columna lateral ocupa todo el alto del artículo para que su índice
+   pueda quedarse fijo mientras se lee */
+.bd-post > aside { align-self: stretch; }
+
+@media (max-width: 1000px) {
+  .bd-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bd-hero { grid-template-columns: 1fr; }
+}
+@media (max-width: 900px) {
+  /* minmax(0, 1fr): sin esto, una tabla ancha estira la columna y la página
+     se desborda en móvil en lugar de desplazarse dentro de su contenedor */
+  .bd-post { grid-template-columns: minmax(0, 1fr); }
+  .bd-toc { position: static !important; }
+  /* Índice del artículo: área de toque cómoda en pantallas táctiles */
+  .bd-toc nav { gap: 2px !important; }
+  .bd-toc nav a { padding: 8px 0; }
+}
+@media (max-width: 860px) {
+  .bd-2, .bd-split, .bd-cta { grid-template-columns: 1fr; }
+  .bd-split { align-items: start; }
+  /* Regla general (23-sep-2026): todo botón de WhatsApp dentro del contenido
+     ocupa el ancho completo. La barra y el círculo flotante quedan fuera de main.
+     El relleno del prototipo va en línea; aquí se reduce para que el texto quepa */
+  main .bd-wa {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    justify-self: stretch;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    text-align: center;
+    text-wrap: balance;
+  }
+}
+@media (max-width: 380px) {
+  main .bd-wa { font-size: 15px !important; }
+}
+@media (max-width: 640px) {
+  .bd-3, .bd-4 { grid-template-columns: 1fr; }
+}
+
+/* Tablas de artículos con tres columnas o más: en móvil cada fila es una
+   tarjeta. La primera celda es el título; las demás llevan su encabezado
+   como etiqueta. Un valor corto queda junto a su etiqueta y uno largo baja
+   a la línea siguiente. */
+@media (max-width: 640px) {
+  .bd-apilada thead { display: none; }
+  .bd-apilada,
+  .bd-apilada tbody,
+  .bd-apilada tr { display: block; width: 100%; }
+  .bd-apilada tr {
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    padding: 4px 16px;
+    margin: 0 0 12px;
+    background: #fff;
+    box-sizing: border-box;
+  }
+  .bd-apilada td {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 12px;
+    row-gap: 2px;
+    border: 0 !important;
+    border-top: 1px solid var(--borde-nav) !important;
+    padding: 9px 0 !important;
+  }
+  .bd-apilada td:first-child {
+    display: block;
+    border-top: 0 !important;
+    padding-top: 12px !important;
+    font-weight: 600;
+    color: var(--gris);
+  }
+  .bd-apilada td[data-label]::before {
+    content: attr(data-label);
+    flex: 0 0 auto;
+    min-width: 7.5em;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--cian-texto);
+  }
+}
+
+/* -------------------------------------------------------------- tarjetas */
+.bd-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  padding: 24px;
+  transition: transform .15s, box-shadow .15s, border-color .15s;
+}
+.bd-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0, 150, 176, .14);
+  border-color: var(--cian);
+  color: inherit;
+}
+.bd-card:focus-visible { outline: 2px solid var(--cian); outline-offset: 2px; }
+.bd-card h3 { overflow-wrap: anywhere; hyphens: auto; }
+
+.bd-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+  background: linear-gradient(165deg, #ffffff 0%, #eef7f9 100%);
+  border: 1px solid var(--borde-suave);
+  border-radius: 22px;
+  padding: 28px;
+  transition: background .18s, transform .18s, box-shadow .18s, border-color .18s;
+}
+.bd-tile:hover {
+  background: linear-gradient(165deg, #ffffff 0%, #e6f4f7 100%);
+  border-color: var(--cian);
+  transform: translateY(-4px);
+  box-shadow: 0 14px 34px rgba(0, 150, 176, .18);
+  color: inherit;
+}
+.bd-tile:focus-visible { outline: 2px solid var(--cian); outline-offset: 3px; }
+.bd-tile h3 { overflow-wrap: anywhere; }
+/* Con cuatro columnas, el título reserva tres líneas para que las
+   descripciones queden alineadas entre tarjetas */
+@media (min-width: 1001px) {
+  .bd-tile h3 { min-height: calc(1.35em * 3); }
+}
+.bd-tile-desc {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--gris-2);
+}
+/* Ícono protagonista: cuadro con degradado cian y volumen suave */
+.bd-tile .bd-ico {
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  background: linear-gradient(150deg, #26c0da 0%, var(--cian) 55%, var(--cian-texto) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 10px 22px rgba(0, 150, 176, .28);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  margin-bottom: 4px;
+  transition: transform .2s, box-shadow .2s;
+}
+.bd-tile .bd-ico svg { width: 28px; height: 28px; stroke-width: 1.75; }
+.bd-tile:hover .bd-ico {
+  transform: translateY(-2px) rotate(-4deg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 14px 26px rgba(0, 150, 176, .34);
+}
+.bd-tile .bd-go {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cian-texto);
+}
+.bd-tile .bd-arrow {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--cian);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .18s;
+}
+.bd-tile:hover .bd-arrow { transform: translateX(5px); }
+
+/* Razones del bloque 02 del Inicio: mismo lenguaje que .bd-tile, sin enlace */
+.bd-razon {
+  background: linear-gradient(165deg, #ffffff 0%, #eef7f9 100%);
+  border: 1px solid var(--borde-suave);
+  border-radius: 22px;
+  padding: 32px 28px;
+  transition: background .18s, transform .18s, box-shadow .18s, border-color .18s;
+}
+.bd-razon:hover {
+  background: linear-gradient(165deg, #ffffff 0%, #e6f4f7 100%);
+  border-color: var(--cian);
+  transform: translateY(-4px);
+  box-shadow: 0 14px 34px rgba(0, 150, 176, .18);
+}
+.bd-razon img { transition: transform .2s; }
+.bd-razon:hover img { transform: translateY(-2px) rotate(-4deg); }
+
+/* --------------------------------------------------------- servicios
+   Página de Servicios, versión B: ícono del área arriba del título y un
+   ícono por servicio, con el mismo lenguaje que las tarjetas del Inicio. */
+.bd-area-ico {
+  width: 76px;
+  height: 76px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: linear-gradient(150deg, #26c0da 0%, var(--cian) 55%, var(--cian-texto) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 12px 26px rgba(0, 150, 176, .28);
+  margin-bottom: 22px;
+}
+.bd-serv {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: linear-gradient(165deg, #ffffff 0%, #eef7f9 100%);
+  border: 1px solid var(--borde-suave);
+  border-radius: 18px;
+  padding: 20px 22px;
+  transition: transform .18s, box-shadow .18s, border-color .18s;
+}
+.bd-serv:hover {
+  transform: translateX(4px);
+  border-color: var(--cian);
+  box-shadow: 0 12px 30px rgba(0, 150, 176, .14);
+}
+.bd-serv h3 { margin-top: 2px !important; }
+.bd-serv p { margin-top: 6px !important; }
+.bd-serv-ico {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: var(--cian);
+  border: 1px solid var(--borde-suave);
+  box-shadow: 0 6px 14px rgba(0, 150, 176, .12);
+}
+/* Correo y teléfono de Contacto: mismo ícono que los servicios. Las tarjetas
+   van lado a lado solo si caben completas; si no, se apilan */
+.bd-datos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 28px;
+}
+.bd-dato {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  min-width: 0;
+  background: linear-gradient(165deg, #ffffff 0%, #eef7f9 100%);
+  border: 1px solid var(--borde-suave);
+  border-radius: 18px;
+  padding: 16px 20px;
+}
+.bd-dato > div { min-width: 0; overflow-wrap: anywhere; }
+.bd-serv-mas {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  border: 1px dashed var(--borde-punteado);
+  border-radius: 18px;
+  padding: 14px 22px;
+  font-size: 14.5px;
+  color: var(--cian-texto);
+  font-weight: 600;
+}
+.bd-serv-areas {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--gris-2);
+}
+.bd-serv-areas li { padding-left: 14px; position: relative; }
+.bd-serv-areas li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .6em;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--cian);
+}
+.bd-serv-areas b { color: var(--gris); font-weight: 600; }
+.bd-serv-ico-chico { width: 36px; height: 36px; border-radius: 12px; box-shadow: none; }
+
+/* -------------------------------------------------------------- WhatsApp */
+.bd-wa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--wa);
+  color: #fff;
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background .15s;
+}
+.bd-wa:hover { background: var(--wa-hover); color: #fff; }
+.bd-wa:focus-visible { outline: 2px solid var(--wa); outline-offset: 2px; }
+
+.bd-float {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 20;
+  padding: 15px 24px;
+  font-size: 15.5px;
+  box-shadow: 0 10px 30px rgba(37, 211, 102, .42);
+}
+.bd-float span { white-space: nowrap; }
+/* En móvil el CTA flotante es un círculo en la esquina, separado 24 px de
+   los bordes para tocarlo cómodo con funda (23-sep-2026). El texto
+   se conserva para lectores de pantalla. js/bresdi.js lo oculta mientras el
+   botón de WhatsApp del hero siga a la vista, o en los primeros 300 px de
+   scroll si la página no tiene ese botón. En escritorio no cambia nada. */
+@media (max-width: 640px) {
+  .bd-float {
+    right: 24px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    width: 58px;
+    height: 58px;
+    padding: 0;
+    border-radius: 50%;
+  }
+  .bd-wa.bd-float { transition: background .15s, opacity .25s, transform .25s, visibility .25s; }
+  .bd-float svg { width: 28px; height: 28px; }
+  .bd-float span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .bd-float.bd-float-oculto {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(12px) scale(.9);
+  }
+}
+
+/* ------------------------------------------------------------ acordeones */
+details summary::-webkit-details-marker { display: none; }
+details summary span svg { transition: transform .18s; }
+details[open] summary span svg { transform: rotate(180deg); }
+/* Toda la tarjeta abre la respuesta (23-sep-2026): el relleno pasa de la
+   tarjeta a la pregunta, así el área de toque es la tarjeta completa. El
+   prototipo trae el relleno en línea, por eso el !important */
+main details { padding: 0 !important; }
+main details > summary { padding: 18px 22px; border-radius: 16px; }
+main details > summary:focus-visible { outline: 2px solid var(--cian); outline-offset: 2px; }
+main details > p { margin: -6px 0 0 !important; padding: 0 22px 18px; }
+
+/* --------------------------------------------------------------- footer */
+.bd-footer {
+  background: var(--gris);
+  color: rgba(255, 255, 255, .78);
+  font-size: 13.5px;
+  line-height: 1.9;
+}
+.bd-footer-rejilla {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px clamp(20px, 5vw, 72px) 32px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 28px;
+}
+.bd-footer-logo {
+  filter: brightness(0) invert(1);
+  height: 30px;
+  width: auto;
+  display: block;
+  margin-bottom: 14px;
+}
+.bd-footer-desc {
+  margin: 0;
+  max-width: 34ch;
+}
+.bd-footer h2 {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 8px;
+}
+.bd-footer a {
+  display: block;
+  color: rgba(255, 255, 255, .78);
+  text-decoration: none;
+}
+.bd-footer a:hover { color: #fff; }
+.bd-footer a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.bd-footer-barra {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px clamp(20px, 5vw, 72px) 28px;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+  font-size: 12.5px;
+}
+/* El CTA flotante no debe tapar el aviso del pie en móvil */
+@media (max-width: 640px) {
+  .bd-footer-barra { padding-bottom: 96px; }
+  /* Enlaces del pie más altos para tocarlos sin error (23-sep-2026) */
+  .bd-footer a { padding: 9px 0; line-height: 1.6; }
+  .bd-footer h2 { margin-bottom: 4px; }
+}
+
+/* Enlace a la página propia del área, bajo su botón en servicios.html */
+.bd-sv-ir {
+  display: block;
+  margin-top: 14px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--cian-texto);
+  text-decoration: none;
+}
+.bd-sv-ir:hover { text-decoration: underline; }
+
+/* ---------------------------------------------------- páginas de servicio
+   Una página por área (construir-servicios.py). Nació con REPSE el
+   23-sep-2026. Reutiliza .bd-razon, .bd-serv y .bd-cta del resto del sitio. */
+.bd-sv-hero-datos { display: grid; gap: 14px; }
+.bd-sv-dato {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: linear-gradient(165deg, #ffffff 0%, #eef7f9 100%);
+  border: 1px solid var(--borde-suave);
+  border-radius: 20px;
+  padding: 22px 24px;
+}
+.bd-sv-valor { font-size: 30px; font-weight: 700; color: var(--cian); line-height: 1.1; }
+.bd-sv-texto { font-size: 14.5px; line-height: 1.5; color: var(--gris-2); }
+.bd-sv-tile { text-align: left; }
+.bd-sv-riesgo {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 24px 48px;
+  align-items: center;
+  background: var(--gris);
+  color: #fff;
+  border-radius: 24px;
+  padding: 48px clamp(24px, 4vw, 56px);
+  margin: 24px 0;
+}
+.bd-sv-riesgo-lista { display: grid; gap: 12px; }
+.bd-sv-riesgo-lista div {
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 16px;
+  padding: 16px 18px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, .85);
+}
+.bd-sv-riesgo-lista b { color: #fff; }
+.bd-sv-pasos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.bd-sv-paso {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border-top: 3px solid var(--cian);
+  padding-top: 20px;
+}
+.bd-sv-num {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: linear-gradient(150deg, #26c0da 0%, var(--cian) 55%, var(--cian-texto) 100%);
+  color: #fff;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bd-sv-precio {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 28px 48px;
+  align-items: start;
+  border: 1px solid var(--borde-suave);
+  border-radius: 24px;
+  padding: 36px clamp(24px, 4vw, 48px);
+  background: #fff;
+}
+/* Alcance del precio: lo que incluye y lo que se cotiza aparte (23-sep-2026) */
+.bd-sv-alcance { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 28px; }
+.bd-sv-alcance h3 { font-size: 15px; font-weight: 600; margin: 0 0 10px; color: var(--gris); }
+.bd-sv-alcance ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.bd-sv-alcance li {
+  position: relative;
+  padding-left: 26px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--gris-2);
+}
+.bd-sv-alcance li::before {
+  position: absolute;
+  left: 0;
+  top: 1px;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+.bd-sv-si li::before { content: "✓"; background: var(--tinte); color: var(--cian-texto); border: 1px solid var(--borde-suave); }
+.bd-sv-no li::before { content: "+"; background: #f4f5f6; color: var(--gris-2); border: 1px solid var(--borde); }
+/* Preguntas del área a todo el ancho; la respuesta conserva un largo de línea legible */
+.bd-sv-preguntas { display: grid; gap: 12px; }
+.bd-sv-preguntas details p { max-width: 75ch; }
+@media (max-width: 1000px) {
+  .bd-sv-pasos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 860px) {
+  .bd-sv-riesgo, .bd-sv-precio { grid-template-columns: 1fr; }
+  .bd-sv-hero-datos { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .bd-sv-dato { padding: 16px 14px; border-radius: 16px; }
+  .bd-sv-valor { font-size: 22px; }
+  .bd-sv-texto { font-size: 12.5px; }
+}
+@media (max-width: 480px) {
+  .bd-sv-hero-datos .bd-sv-dato { padding: 14px 10px; }
+  .bd-sv-hero-datos .bd-sv-valor { font-size: 19px; }
+}
+/* Móvil: número a la izquierda, título y texto a la derecha, unidos por una línea */
+@media (max-width: 640px) {
+  .bd-sv-pasos { grid-template-columns: 1fr; gap: 0; }
+  .bd-sv-paso {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 16px;
+    border-top: 0;
+    padding: 0 0 28px;
+    position: relative;
+  }
+  .bd-sv-paso:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 17px;
+    top: 44px;
+    bottom: 6px;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--borde-suave);
+  }
+  .bd-sv-paso h3 { margin-top: 6px !important; }
+  .bd-sv-alcance { grid-template-columns: 1fr; }
+}
+
+/* --------------------------------------------------------------- formulario */
+.bd-form-estado {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.bd-form-estado[data-tipo="error"] { color: #b3261e; }
+.bd-form-estado[data-tipo="ok"] { color: var(--cian-texto); }
+
+/* -------------------------------------------------------------- movimiento
+   Todo lo de esta sección depende de la clase bd-js, que js/bresdi.js pone
+   solo si el visitante no pidió reducir animaciones. Sin JavaScript el sitio
+   se ve completo y estático. */
+
+/* Barra con sombra al bajar */
+.bd-nav { transition: box-shadow .2s; }
+.bd-nav.bd-nav-sombra { box-shadow: 0 6px 24px rgba(40, 50, 55, .07); }
+
+/* Botones de WhatsApp: se elevan un poco al pasar el cursor */
+.bd-wa { transition: background .15s, transform .15s, box-shadow .15s; }
+.bd-wa:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(37, 211, 102, .32); }
+.bd-float:hover { box-shadow: 0 14px 34px rgba(37, 211, 102, .5); }
+
+/* Ilustración del hero: flota despacio */
+@keyframes bd-flotar {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.bd-js .bd-hero figure img { animation: bd-flotar 7s ease-in-out infinite; }
+/* Video del hero: el blanco del video se funde con el de la página aunque la
+   compresión lo altere un par de tonos */
+.bd-hero-video { mix-blend-mode: multiply; background: #fff; }
+
+/* Aparición al hacer scroll */
+.bd-js .bd-rev {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity .65s ease, transform .65s cubic-bezier(.2, .7, .2, 1);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+.bd-js .bd-rev.bd-visto { opacity: 1; transform: none; }
+
+/* Línea superior de los pasos: se llena de izquierda a derecha */
+.bd-js .bd-linea {
+  position: relative;
+  border-top-color: var(--borde-suave) !important;
+}
+.bd-js .bd-linea::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--cian);
+  transform-origin: left center;
+  transform: scaleX(var(--lleno, 1));
+  transition: transform .9s cubic-bezier(.2, .7, .2, 1) .25s;
+}
+.bd-js .bd-linea.bd-rev:not(.bd-visto)::before { transform: scaleX(0); }
+
+/* Los tres pasos del Inicio avanzan con el scroll (solo pantallas amplias) */
+.bd-pasos-scroll {
+  height: 230vh;
+  padding: 0 !important;
+}
+.bd-pasos-scroll .bd-pasos-fijo {
+  position: sticky;
+  top: var(--nav-alto, 64px);
+  min-height: calc(100vh - var(--nav-alto, 64px));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 32px 0;
+  box-sizing: border-box;
+}
+.bd-pasos-scroll .bd-linea::before { transition: none; }
+.bd-pasos-scroll .bd-linea { transition: opacity .4s ease, transform .4s ease; }
+.bd-pasos-scroll .bd-linea.bd-paso-pendiente { opacity: .32; transform: translateY(10px); }
+
+/* Ilustraciones animadas del bloque 03 del Inicio. Cada escena se arma con
+   piezas transparentes en una caja 4:3; las medidas van en cqw para que todo
+   escale con la caja. Sin JS se ve la escena completa. js/bresdi.js mueve las
+   piezas al ritmo de la línea de cada paso. */
+.bd-esc-caja { width: 100%; container-type: inline-size; margin-bottom: 18px; }
+.bd-esc { position: relative; width: 100cqw; height: 75cqw; transform: scale(.86); }
+.bd-esc img { position: absolute; display: block; max-width: none; }
+/* Paso 1: teléfono y burbujas */
+.bd-esc-tel { left: 32.08cqw; top: 6.5cqw; width: 35.83cqw; filter: drop-shadow(0 1.2cqw 1.6cqw rgba(0, 50, 70, .10)); }
+.bd-esc-gris { transform-origin: 0 100%; }
+.bd-esc-verde { transform-origin: 100% 100%; }
+/* Paso 2: documento y lupa. --x y --y son el centro del cristal. */
+.bd-esc[data-anim="lupa"] { --x: 57cqw; --y: 31.5cqw; --r: 10.9cqw; --o: 1; --s: 1; }
+.bd-esc-doc { left: 20cqw; top: 6.5cqw; width: 50.6cqw; filter: drop-shadow(0 1.2cqw 1.6cqw rgba(0, 50, 70, .10)); }
+.bd-esc-lente { position: absolute; inset: 0; opacity: var(--o); transform: scale(var(--s)); transform-origin: var(--x) var(--y); }
+.bd-esc-cristal {
+  position: absolute;
+  left: calc(var(--x) - var(--r));
+  top: calc(var(--y) - var(--r));
+  width: calc(var(--r) * 2);
+  height: calc(var(--r) * 2);
+  border-radius: 50%;
+  overflow: hidden;
+}
+/* Dentro del cristal se ve el mismo documento 20 % más grande */
+.bd-esc-cristal img {
+  left: calc(20cqw - var(--x) + var(--r));
+  top: calc(6.5cqw - var(--y) + var(--r));
+  width: 50.6cqw;
+  transform: scale(1.2);
+  transform-origin: calc(var(--x) - 20cqw) calc(var(--y) - 6.5cqw);
+}
+.bd-esc-cristal::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, .55) 0 12%, rgba(255, 255, 255, 0) 34%), rgba(0, 150, 176, .06);
+  box-shadow: inset 0 0 1.2cqw rgba(0, 90, 110, .18);
+}
+.bd-esc-aro { left: calc(var(--x) - 15.15cqw); top: calc(var(--y) - 14.5cqw); width: 41.07cqw; filter: drop-shadow(0 1.4cqw 1.4cqw rgba(0, 50, 70, .18)); }
+/* Paso 3: carpeta, hojas entre el fondo y el frente, y palomita */
+.bd-esc-carpeta { left: 18.64cqw; top: 13.36cqw; width: 58.01cqw; }
+.bd-esc-fondo { filter: drop-shadow(0 1.2cqw 1.6cqw rgba(0, 50, 70, .12)); }
+.bd-esc-hoja { width: 28.62cqw; transform: rotate(var(--giro)); }
+.bd-esc-palomita { left: 62.22cqw; top: 49.12cqw; width: 18.48cqw; filter: drop-shadow(0 1cqw 1.2cqw rgba(0, 50, 70, .18)); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; animation: none !important; }
+}

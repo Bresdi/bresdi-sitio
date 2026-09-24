@@ -1,0 +1,408 @@
+/* Bresdi — comportamiento del sitio.
+   Menú de móvil, envío del formulario de contacto, filtros de artículos y
+   movimiento: secciones que aparecen al hacer scroll, sombra de la barra y
+   los tres pasos del Inicio que avanzan con el scroll.
+   El sitio funciona sin este archivo; solo pierde esas comodidades.
+   Todo el movimiento se omite si el visitante pidió reducir animaciones. */
+
+(function () {
+  "use strict";
+
+  /* ---------------------------------------------------------- menú móvil */
+  var boton = document.querySelector(".bd-menu-btn");
+  var menu = document.getElementById("bd-menu");
+
+  if (boton && menu) {
+    boton.addEventListener("click", function () {
+      var abierto = boton.getAttribute("aria-expanded") === "true";
+      boton.setAttribute("aria-expanded", abierto ? "false" : "true");
+      boton.setAttribute("aria-label", abierto ? "Abrir menú" : "Cerrar menú");
+      menu.hidden = abierto;
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && boton.getAttribute("aria-expanded") === "true") {
+        boton.setAttribute("aria-expanded", "false");
+        boton.setAttribute("aria-label", "Abrir menú");
+        menu.hidden = true;
+        boton.focus();
+      }
+    });
+  }
+
+  /* ------------------------------------------------ desplegable Servicios
+     En escritorio se abre al pasar el cursor (css). La flecha lo abre y lo
+     cierra al tocar o con el teclado; Escape y un clic fuera lo cierran. */
+  var drop = document.querySelector(".bd-drop");
+  var dropBtn = drop && drop.querySelector(".bd-drop-btn");
+  if (drop && dropBtn) {
+    var cierraDrop = function () {
+      drop.classList.remove("bd-abierto");
+      dropBtn.setAttribute("aria-expanded", "false");
+    };
+    dropBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var abierto = drop.classList.toggle("bd-abierto");
+      dropBtn.setAttribute("aria-expanded", abierto ? "true" : "false");
+    });
+    document.addEventListener("click", function (e) {
+      if (!drop.contains(e.target)) cierraDrop();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && drop.classList.contains("bd-abierto")) {
+        cierraDrop();
+        dropBtn.focus();
+      }
+    });
+  }
+
+  /* ------------------------------------------------- formulario de contacto
+     Envío por fetch a Web3Forms para no salir de la página. Si la clave
+     todavía no está configurada, el formulario avisa en lugar de fallar en
+     silencio. */
+  var forma = document.querySelector("form[data-bd-form]");
+  if (forma) conectaFormulario(forma);
+
+  function conectaFormulario(forma) {
+
+  var estado = forma.querySelector(".bd-form-estado");
+  var enviar = forma.querySelector('button[type="submit"]');
+
+  function aviso(texto, tipo) {
+    if (!estado) return;
+    estado.textContent = texto;
+    estado.setAttribute("data-tipo", tipo);
+  }
+
+  forma.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    var destino = forma.getAttribute("action") || "";
+    var clave = forma.querySelector('input[name="access_key"]');
+    if (!destino || (clave && !clave.value)) {
+      aviso("El formulario todavía no está conectado. Escríbenos por WhatsApp mientras tanto.", "error");
+      return;
+    }
+
+    if (enviar) {
+      enviar.disabled = true;
+      enviar.textContent = "Enviando…";
+    }
+    aviso("", "");
+
+    fetch(destino, {
+      method: "POST",
+      body: new FormData(forma),
+      headers: { Accept: "application/json" }
+    })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (datos) {
+          if (!r.ok || datos.success === false) throw new Error("respuesta " + r.status);
+        });
+      })
+      .then(function () {
+        forma.reset();
+        aviso("Mensaje enviado. Te respondemos el siguiente día hábil.", "ok");
+      })
+      .catch(function () {
+        aviso("No se pudo enviar el mensaje. Escríbenos por WhatsApp y lo resolvemos.", "error");
+      })
+      .then(function () {
+        if (enviar) {
+          enviar.disabled = false;
+          enviar.textContent = "Enviar mensaje";
+        }
+      });
+  });
+  }
+
+  /* ------------------------------------------------ filtros de artículos
+     Las píldoras del índice filtran las tarjetas por la categoría que cada
+     tarjeta muestra en su etiqueta. */
+  var pildoras = Array.prototype.filter.call(
+    document.querySelectorAll('main a[href="#"]'),
+    function (a) { return /^(Todos|REPSE|Trámites SAT|NOM-035|Capacitaciones)$/.test(a.textContent.trim()); });
+
+  if (pildoras.length > 1) {
+    var estiloActivo = pildoras[0].getAttribute("style");
+    var estiloInactivo = pildoras[1].getAttribute("style");
+    var tarjetas = Array.prototype.filter.call(
+      document.querySelectorAll("main a.bd-card"),
+      function (t) { return t.querySelector("span"); });
+
+    pildoras.forEach(function (p, i) {
+      p.setAttribute("role", "button");
+      p.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+      p.addEventListener("click", function (e) {
+        e.preventDefault();
+        var cat = p.textContent.trim();
+        pildoras.forEach(function (o) {
+          var activo = o === p;
+          o.setAttribute("style", activo ? estiloActivo : estiloInactivo);
+          o.setAttribute("aria-pressed", activo ? "true" : "false");
+        });
+        tarjetas.forEach(function (t) {
+          var etiqueta = t.querySelector("span").textContent;
+          var entra = cat === "Todos" || etiqueta.indexOf(cat) !== -1;
+          t.hidden = !entra;
+          t.style.display = entra ? "" : "none";
+        });
+        // Si el destacado queda oculto, su sección no debe dejar hueco
+        document.querySelectorAll("main section").forEach(function (s) {
+          var propias = s.querySelectorAll("a.bd-card");
+          if (!propias.length) return;
+          var alguna = Array.prototype.some.call(propias, function (t) { return !t.hidden; });
+          s.style.display = alguna ? "" : "none";
+        });
+      });
+    });
+  }
+
+  /* ------------------------------------------------- CTA flotante en móvil
+     El círculo de WhatsApp espera a que el botón de WhatsApp del hero quede
+     detrás de la barra. Si la página no tiene ese botón en la primera
+     pantalla, aparece tras 300 px de scroll. La clase solo tiene efecto en
+     móvil (css); en escritorio la píldora se ve siempre. */
+  var flotante = document.querySelector(".bd-float");
+  if (flotante) {
+    var navFija = document.querySelector(".bd-nav");
+    var ctaHero = document.querySelector("main .bd-wa");
+    if (ctaHero && ctaHero.getBoundingClientRect().top + window.scrollY > window.innerHeight) ctaHero = null;
+    var revisaFlotante = function () {
+      var oculto = ctaHero
+        ? ctaHero.getBoundingClientRect().bottom > (navFija ? navFija.offsetHeight : 0)
+        : window.scrollY < 300;
+      flotante.classList.toggle("bd-float-oculto", oculto);
+    };
+    revisaFlotante();
+    window.addEventListener("scroll", revisaFlotante, { passive: true });
+    window.addEventListener("resize", revisaFlotante);
+  }
+
+  /* ------------------------------------------------------------ movimiento */
+  var reducir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Hero animado: la imagen fija se sustituye por un video en loop con la
+  // misma imagen como póster, así que no hay salto visual mientras carga.
+  // Se omite con animaciones reducidas o con ahorro de datos.
+  var imgHero = document.querySelector("img[data-video]");
+  var ahorro = navigator.connection && navigator.connection.saveData;
+  if (imgHero && !reducir && !ahorro) {
+    var video = document.createElement("video");
+    video.className = "bd-hero-video";
+    video.muted = true;
+    video.loop = true;
+    video.autoplay = true;
+    video.playsInline = true;
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+    video.setAttribute("preload", "auto");
+    video.setAttribute("poster", imgHero.getAttribute("src"));
+    video.setAttribute("aria-label", imgHero.getAttribute("alt"));
+    video.setAttribute("style", imgHero.getAttribute("style") || "");
+    var fuente = document.createElement("source");
+    fuente.src = imgHero.getAttribute("data-video");
+    fuente.type = "video/mp4";
+    video.appendChild(fuente);
+    imgHero.replaceWith(video);
+    var reproduce = function () {
+      var intento = video.play();
+      if (intento && intento.catch) intento.catch(function () {});
+    };
+    reproduce();
+    // Si la página cargó en una pestaña oculta, arranca al volverse visible
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden && video.paused) reproduce();
+    });
+  }
+
+  if (reducir || !("IntersectionObserver" in window)) return;
+
+  document.documentElement.classList.add("bd-js");
+
+  // Sombra de la barra al bajar
+  var barra = document.querySelector(".bd-nav");
+  function sombra() {
+    if (barra) barra.classList.toggle("bd-nav-sombra", window.scrollY > 8);
+  }
+  sombra();
+  window.addEventListener("scroll", sombra, { passive: true });
+
+  // Pasos con línea superior (Inicio y Nosotros): la línea se llena al aparecer
+  document.querySelectorAll('main [style*="border-top:3px solid"]').forEach(function (el) {
+    el.classList.add("bd-linea");
+  });
+
+  // Los tres pasos del Inicio: fijos en pantalla mientras avanzan con el scroll
+  var pasos = document.getElementById("como");
+  var modoPasos = window.matchMedia("(min-width: 901px) and (min-height: 700px)");
+  var lineasPasos = pasos ? pasos.querySelectorAll(".bd-linea") : [];
+
+  if (pasos && lineasPasos.length) {
+    var fijo = document.createElement("div");
+    fijo.className = "bd-pasos-fijo";
+    while (pasos.firstChild) fijo.appendChild(pasos.firstChild);
+    pasos.appendChild(fijo);
+
+    var pintaPasos = function () {
+      if (!pasos.classList.contains("bd-pasos-scroll")) return;
+      var arriba = barra ? barra.offsetHeight : 0;
+      var recorrido = pasos.offsetHeight - fijo.offsetHeight;
+      var avance = recorrido > 0 ? (arriba - pasos.getBoundingClientRect().top) / recorrido : 1;
+      // El último 15 % del recorrido deja los tres pasos completos a la vista
+      avance = Math.min(Math.max(avance / 0.85, 0), 1);
+      Array.prototype.forEach.call(lineasPasos, function (el, i) {
+        var lleno = Math.min(Math.max(avance * lineasPasos.length - i, 0), 1);
+        el.style.setProperty("--lleno", lleno.toFixed(3));
+        el.classList.toggle("bd-paso-pendiente", i > 0 && lleno === 0);
+      });
+    };
+
+    var ajustaModo = function () {
+      var activo = modoPasos.matches;
+      pasos.classList.toggle("bd-pasos-scroll", activo);
+      if (barra) pasos.style.setProperty("--nav-alto", barra.offsetHeight + "px");
+      if (!activo) {
+        Array.prototype.forEach.call(lineasPasos, function (el) {
+          el.style.removeProperty("--lleno");
+          el.classList.remove("bd-paso-pendiente");
+        });
+      }
+      pintaPasos();
+    };
+
+    ajustaModo();
+    if (modoPasos.addEventListener) modoPasos.addEventListener("change", ajustaModo);
+    window.addEventListener("scroll", pintaPasos, { passive: true });
+    window.addEventListener("resize", ajustaModo);
+  }
+
+  // Ilustraciones animadas de los pasos del Inicio. En pantallas amplias cada
+  // una avanza con la línea cian de su paso; en móvil, mientras sube por la
+  // pantalla. Siguen al scroll con un leve retraso para suavizar la rueda.
+  var escenas = document.querySelectorAll("[data-anim]");
+  if (escenas.length) {
+    var suave = function (t) { return t * t * (3 - 2 * t); };
+    var tramo = function (p, a, b) { return Math.min(Math.max((p - a) / (b - a), 0), 1); };
+    // Curva de la lupa: entra abajo a la derecha, barre los renglones, sube al
+    // título y baja a descansar sobre la barra cian.
+    var curva = [[74, 60], [26, 64], [28, 6], [57, 31.5]];
+    var bezier = function (t, i) {
+      var u = 1 - t;
+      return u * u * u * curva[0][i] + 3 * u * u * t * curva[1][i] + 3 * u * t * t * curva[2][i] + t * t * t * curva[3][i];
+    };
+    var pintores = {
+      // Las cuatro burbujas llegan una tras otra desde su colita
+      telefono: function (el, p) {
+        Array.prototype.forEach.call(el.querySelectorAll(".bd-esc-burbuja"), function (b, i) {
+          var t = suave(tramo(p, 0.04 + i * 0.22, 0.26 + i * 0.22));
+          b.style.opacity = t.toFixed(3);
+          b.style.transform = "translateY(" + ((1 - t) * 2).toFixed(2) + "cqw) scale(" + (0.6 + 0.4 * t).toFixed(3) + ")";
+        });
+      },
+      lupa: function (el, p) {
+        var t = suave(p), e = Math.min(p / 0.18, 1);
+        el.style.setProperty("--x", bezier(t, 0).toFixed(2) + "cqw");
+        el.style.setProperty("--y", bezier(t, 1).toFixed(2) + "cqw");
+        el.style.setProperty("--o", e.toFixed(3));
+        el.style.setProperty("--s", (0.9 + 0.1 * e).toFixed(3));
+      },
+      // Tres hojas bajan y se meten en la carpeta; al final entra la palomita
+      carpeta: function (el, p) {
+        Array.prototype.forEach.call(el.querySelectorAll(".bd-esc-hoja"), function (h, i) {
+          var t = suave(tramo(p, 0.02 + i * 0.2, 0.3 + i * 0.2));
+          h.style.opacity = Math.min(t * 2.5, 1).toFixed(3);
+          h.style.transform = "translateY(" + ((1 - t) * -14).toFixed(2) + "cqw) rotate(var(--giro))";
+        });
+        var q = tramo(p, 0.72, 0.96), c = 1.70158;
+        var rebote = q ? 1 + (c + 1) * Math.pow(q - 1, 3) + c * Math.pow(q - 1, 2) : 0;
+        var palomita = el.querySelector(".bd-esc-palomita");
+        palomita.style.opacity = Math.min(q * 3, 1).toFixed(3);
+        palomita.style.transform = "scale(" + rebote.toFixed(3) + ")";
+      }
+    };
+    var items = Array.prototype.map.call(escenas, function (el) {
+      return { el: el, paso: el.closest(".bd-linea"), pinta: pintores[el.getAttribute("data-anim")] };
+    }).filter(function (it) { return it.pinta; });
+    var objetivo = function (it) {
+      if (pasos && pasos.classList.contains("bd-pasos-scroll") && it.paso) {
+        var v = parseFloat(it.paso.style.getPropertyValue("--lleno"));
+        return isNaN(v) ? 0 : v;
+      }
+      var r = it.el.getBoundingClientRect(), vh = window.innerHeight;
+      return Math.min(Math.max((vh * 0.95 - r.top) / (vh * 0.55), 0), 1);
+    };
+    var corriendo = false;
+    var ciclo = function () {
+      var sigue = false;
+      items.forEach(function (it) {
+        var meta = objetivo(it);
+        it.actual += (meta - it.actual) * 0.09;
+        if (Math.abs(meta - it.actual) < 0.0008) it.actual = meta; else sigue = true;
+        it.pinta(it.el, it.actual);
+      });
+      corriendo = sigue;
+      if (sigue) requestAnimationFrame(ciclo);
+    };
+    var arranca = function () {
+      if (!corriendo) { corriendo = true; requestAnimationFrame(ciclo); }
+    };
+    items.forEach(function (it) { it.actual = objetivo(it); it.pinta(it.el, it.actual); });
+    window.addEventListener("scroll", arranca, { passive: true });
+    window.addEventListener("resize", arranca);
+  }
+
+  // Aparición al hacer scroll. Dentro de una rejilla, cada elemento entra con
+  // un pequeño retraso respecto al anterior. No se animan el texto de los
+  // artículos ni lo que ya se ve al cargar la página.
+  var rejilla = /(^|\s)bd-(2|3|4|hero)(\s|$)/;
+  var objetivos = [];
+
+  function agrega(el, i) {
+    if (el.closest(".bd-post") && !el.classList.contains("bd-post")) return;
+    if (el.closest(".bd-pasos-scroll")) return;
+    // Lo que ya está en pantalla al cargar se muestra de inmediato
+    if (el.getBoundingClientRect().top < window.innerHeight * 0.92) return;
+    el.classList.add("bd-rev");
+    el.style.setProperty("--i", i);
+    objetivos.push(el);
+  }
+
+  document.querySelectorAll("main section").forEach(function (sec) {
+    if (sec.classList.contains("bd-post")) return;
+    var hijos = sec.classList.contains("bd-pasos-scroll") ? [] :
+      (rejilla.test(sec.className) && !sec.classList.contains("bd-cta") ? sec.children : [sec]);
+    if (hijos.length === 1 && hijos[0] === sec) {
+      Array.prototype.forEach.call(sec.children, function (h) {
+        if (rejilla.test(h.className) && !h.classList.contains("bd-card")) {
+          Array.prototype.forEach.call(h.children, function (n, i) { agrega(n, i); });
+        } else {
+          agrega(h, 0);
+        }
+      });
+    } else {
+      Array.prototype.forEach.call(hijos, function (n, i) { agrega(n, i); });
+    }
+  });
+
+  var observador = new IntersectionObserver(function (entradas) {
+    entradas.forEach(function (en) {
+      if (!en.isIntersecting) return;
+      var el = en.target;
+      observador.unobserve(el);
+      el.classList.add("bd-visto");
+      // Al terminar, se quitan las clases para que el hover de las tarjetas
+      // recupere su transición corta
+      var limpia = function (e) {
+        if (e && (e.target !== el || e.propertyName !== "opacity" || e.pseudoElement)) return;
+        el.removeEventListener("transitionend", limpia);
+        el.classList.remove("bd-rev", "bd-visto");
+        el.style.removeProperty("--i");
+      };
+      el.addEventListener("transitionend", limpia);
+      setTimeout(limpia, 1600);
+    });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+
+  objetivos.forEach(function (el) { observador.observe(el); });
+})();
