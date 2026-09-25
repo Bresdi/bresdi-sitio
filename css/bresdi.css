@@ -698,6 +698,23 @@ main details > p { margin: -6px 0 0 !important; padding: 0 22px 18px; }
   border-top: 1px solid rgba(255, 255, 255, .12);
   font-size: 12.5px;
 }
+.bd-footer-barra a { display: inline; color: rgba(255, 255, 255, .78); text-decoration: underline; text-underline-offset: 3px; }
+.bd-footer-barra .bd-sep { margin: 0 8px; opacity: .5; }
+/* En escritorio la píldora flotante tapaba los últimos enlaces del pie
+   (pendiente 17, 25-sep-2026). La barra final mide lo mismo que la píldora
+   más su margen, así que al llegar al final la píldora queda dentro de la
+   barra y no encima de los enlaces */
+@media (min-width: 641px) {
+  .bd-footer-barra {
+    min-height: 100px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-right: calc(clamp(20px, 5vw, 72px) + 250px);
+  }
+}
 /* El CTA flotante no debe tapar el aviso del pie en móvil */
 @media (max-width: 640px) {
   .bd-footer-barra { padding-bottom: 96px; }
@@ -1008,14 +1025,21 @@ main { overflow-x: clip; }
    compresión lo altere un par de tonos */
 .bd-hero-video { mix-blend-mode: multiply; background: #fff; }
 
-/* Aparición al hacer scroll */
+/* Aparición al hacer scroll. Más ágil desde el 25-sep-2026 (pendiente 14,
+   auditoría externa): antes 0.65 s con 90 ms entre elementos. Ahora arranca
+   antes de que el bloque entre a la pantalla (rootMargin en js/bresdi.js),
+   dura 0.4 s y el retraso escalonado no pasa de 180 ms. En celular no se usa;
+   ahí solo se llena la línea de los pasos. */
 .bd-js .bd-rev {
   opacity: 0;
-  transform: translateY(22px);
-  transition: opacity .65s ease, transform .65s cubic-bezier(.2, .7, .2, 1);
-  transition-delay: calc(var(--i, 0) * 90ms);
+  transform: translateY(12px);
+  transition: opacity .4s ease, transform .4s cubic-bezier(.2, .7, .2, 1);
+  transition-delay: calc(min(var(--i, 0), 3) * 60ms);
 }
 .bd-js .bd-rev.bd-visto { opacity: 1; transform: none; }
+@media (max-width: 640px) {
+  .bd-js .bd-rev { opacity: 1; transform: none; transition: none; }
+}
 
 /* Línea superior de los pasos: se llena de izquierda a derecha */
 .bd-js .bd-linea {
@@ -1108,4 +1132,149 @@ main { overflow-x: clip; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   * { transition: none !important; animation: none !important; }
+}
+
+/* ------------------------------------------------ portada del Inicio
+   Variante C, elegida el 25-sep-2026. En escritorio (al menos 901 × 700 px)
+   el hero ocupa la pantalla, con una franja al pie que invita a bajar; al
+   hacer scroll queda fijo y .bd-cortina, que envuelve el resto del Inicio,
+   sube encima como una hoja. construir.py arma la estructura y js/bresdi.js
+   desvanece el hero, pausa el video y lo oculta cuando la hoja lo tapa.
+
+   Aviso: position: sticky deja de funcionar en silencio si algún ancestro
+   del hero lleva overflow: hidden, auto o scroll. main usa overflow-x: clip,
+   que sí es compatible. No cambiarlo sin revisar la portada. */
+.bd-franja { display: none; }
+@media (min-width: 901px) and (min-height: 700px) {
+  .bd-portada {
+    position: relative;
+    min-height: min(calc(100svh - var(--nav-alto, 71px)), 900px);
+    box-sizing: border-box;
+    padding: 40px 0 104px !important;
+    align-content: center;
+  }
+  .bd-franja {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 22px 0;
+    border-top: 1px solid var(--borde);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--gris-2);
+  }
+  /* La píldora flotante espera a que se empiece a bajar (js/bresdi.js) */
+  .bd-wa.bd-float { transition: background .15s, transform .25s, box-shadow .15s, opacity .25s, visibility .25s; }
+  .bd-float.bd-float-arriba { opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(12px); }
+  .bd-desliza { display: flex; align-items: center; gap: 14px; color: var(--cian-texto); white-space: nowrap; }
+  .bd-desliza i {
+    display: block;
+    position: relative;
+    width: 56px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--borde-suave);
+    overflow: hidden;
+  }
+  .bd-js .bd-desliza i::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--cian);
+    transform: translateX(-100%);
+    animation: bd-desliza 2.2s ease-in-out infinite;
+  }
+
+  /* La cortina depende de bd-js: sin JavaScript o con animaciones reducidas
+     el hero se ve a pantalla completa, sin quedarse fijo */
+  .bd-js .bd-portada { position: sticky; top: var(--nav-alto, 71px); z-index: 0; }
+  .bd-js .bd-portada > div:first-child,
+  .bd-js .bd-portada figure { will-change: transform, opacity; }
+  .bd-js .bd-cortina { position: relative; z-index: 1; isolation: isolate; }
+  .bd-js .bd-cortina::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: calc(50% - 50vw);
+    right: calc(50% - 50vw);
+    background: #fff;
+    border-radius: 36px 36px 0 0;
+    box-shadow: 0 -20px 44px rgba(40, 50, 55, .09);
+  }
+}
+@keyframes bd-desliza {
+  0% { transform: translateX(-100%); }
+  60%, 100% { transform: translateX(100%); }
+}
+
+/* Halo cian detrás de la ilustración del Inicio, en todas las pantallas. El
+   video se funde con multiply, así que el halo se ve a través de su blanco */
+.bd-portada figure { position: relative; isolation: isolate; }
+.bd-portada figure::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 4%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 150, 176, .24) 0%, rgba(0, 150, 176, .09) 45%, rgba(0, 150, 176, 0) 70%);
+}
+
+/* Inicio en celular, más compacto (pendiente 16, 25-sep-2026). La
+   ilustración del hero ocupaba casi una pantalla entre el botón de WhatsApp
+   y el contenido; ahora es más chica y los bloques tienen menos aire. El
+   relleno del prototipo va en línea, por eso el !important */
+@media (max-width: 640px) {
+  .bd-portada { padding: 40px 0 32px !important; gap: 0; }
+  /* La ilustración va entre el texto y el botón de WhatsApp (Bruno,
+     25-sep-2026). La columna de texto se deshace para que sus piezas y la
+     figura se ordenen en la misma rejilla */
+  .bd-portada > div:first-child { display: contents; }
+  .bd-portada figure { order: 1; width: 64%; max-width: 250px; margin: 24px auto 0 !important; }
+  .bd-portada > div:first-child > div:last-child { order: 2; margin-top: 24px !important; }
+  #quien, #porque, #como, #servicios { padding-top: 44px !important; padding-bottom: 44px !important; }
+  #contacto.bd-cta { margin-top: 12px !important; margin-bottom: 56px !important; }
+}
+
+/* Aviso de privacidad (pendiente 13, 25-sep-2026): línea de aceptación del
+   formulario y enlaces del texto legal */
+.bd-form-aviso { margin: -4px 0 0; font-size: 13px; line-height: 1.5; color: var(--gris-2); }
+.bd-form-aviso a, .bd-legal a { color: var(--cian-texto); text-underline-offset: 3px; }
+.bd-legal li { margin-bottom: 4px; }
+
+/* Servicios en celular: el desglose de cada área se pliega detrás de un
+   botón (idea C, 25-sep-2026). js/bresdi.js crea el botón y marca la lista
+   con .bd-plegable; sin JavaScript la lista se ve completa. En pantallas
+   anchas el botón no aparece y la lista siempre se ve */
+.bd-ver-serv { display: none; }
+@media (max-width: 640px) {
+  .bd-ver-serv {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px 20px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--cian-texto);
+    background: var(--tinte);
+    border: 1px solid var(--borde-suave);
+    border-radius: 16px;
+    cursor: pointer;
+  }
+  .bd-ver-serv svg { flex: none; transition: transform .2s; }
+  .bd-ver-serv[aria-expanded="true"] svg { transform: rotate(180deg); }
+  .bd-ver-serv:focus-visible { outline: 2px solid var(--cian); outline-offset: 2px; }
+  .bd-plegable:not(.bd-abierto) { display: none !important; }
 }

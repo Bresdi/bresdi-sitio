@@ -251,8 +251,13 @@
   var flotante = document.querySelector(".bd-float");
   if (flotante) {
     var navFija = document.querySelector(".bd-nav");
-    var ctaHero = document.querySelector("main .bd-wa");
-    if (ctaHero && ctaHero.getBoundingClientRect().top + window.scrollY > window.innerHeight) ctaHero = null;
+    // El botón del hero manda aunque quede bajo la primera pantalla: en el
+    // Inicio en celular va después de la ilustración (25-sep-2026)
+    var ctaHero = document.querySelector(".bd-hero .bd-wa");
+    if (!ctaHero) {
+      ctaHero = document.querySelector("main .bd-wa");
+      if (ctaHero && ctaHero.getBoundingClientRect().top + window.scrollY > window.innerHeight) ctaHero = null;
+    }
     var revisaFlotante = function () {
       var oculto = ctaHero
         ? ctaHero.getBoundingClientRect().bottom > (navFija ? navFija.offsetHeight : 0)
@@ -263,6 +268,34 @@
     window.addEventListener("scroll", revisaFlotante, { passive: true });
     window.addEventListener("resize", revisaFlotante);
   }
+
+  /* ------------------------------------------ servicios.html en celular
+     El desglose de cada área se pliega detrás de un botón (idea C,
+     25-sep-2026). El css solo lo oculta hasta 640 px, así que al girar el
+     teléfono o ensanchar la ventana la lista vuelve a verse completa. */
+  document.querySelectorAll('section[id^="servicios-"] .bd-split > div:last-child').forEach(function (lista, n) {
+    var total = lista.querySelectorAll(".bd-serv").length;
+    if (!total) return;
+    var id = "bd-desglose-" + n;
+    var textoCerrado = "Ver los " + total + " servicios";
+    lista.id = id;
+    lista.classList.add("bd-plegable");
+    var boton = document.createElement("button");
+    boton.type = "button";
+    boton.className = "bd-ver-serv";
+    boton.setAttribute("aria-expanded", "false");
+    boton.setAttribute("aria-controls", id);
+    boton.innerHTML = "<span>" + textoCerrado + "</span>" +
+      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" ' +
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+    boton.addEventListener("click", function () {
+      var abre = boton.getAttribute("aria-expanded") !== "true";
+      boton.setAttribute("aria-expanded", abre ? "true" : "false");
+      lista.classList.toggle("bd-abierto", abre);
+      boton.firstChild.textContent = abre ? "Ocultar servicios" : textoCerrado;
+    });
+    lista.parentNode.insertBefore(boton, lista);
+  });
 
   /* ------------------------------------------------------------ movimiento */
   var reducir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -304,6 +337,67 @@
   if (reducir || !("IntersectionObserver" in window)) return;
 
   document.documentElement.classList.add("bd-js");
+
+  // Portada del Inicio (variante C, 25-sep-2026). En escritorio el hero queda
+  // fijo mientras .bd-cortina sube encima (css). Aquí el hero se reduce y se
+  // desvanece al quedar tapado, la franja se apaga al empezar a bajar y, con
+  // la hoja encima, el hero se oculta y su video se pausa para no gastar
+  // batería reproduciendo algo que nadie ve.
+  var portada = document.querySelector(".bd-portada");
+  var cortina = document.querySelector(".bd-cortina");
+  if (portada && cortina) {
+    var navPortada = document.querySelector(".bd-nav");
+    var amplia = window.matchMedia("(min-width: 901px) and (min-height: 700px)");
+    var textoPortada = portada.querySelector(":scope > div:first-child");
+    var figPortada = portada.querySelector("figure");
+    var franja = portada.querySelector(".bd-franja");
+    // La píldora flotante tapaba "Desliza para conocer más" a 1440 × 900.
+    // Mientras la franja se ve, el hero ya ofrece su propio botón de
+    // WhatsApp; la píldora aparece en cuanto se empieza a bajar
+    var pildora = document.querySelector(".bd-float");
+    var tapada = false;
+    var pintaPortada = function () {
+      var alto = navPortada ? navPortada.offsetHeight : 0;
+      document.documentElement.style.setProperty("--nav-alto", alto + "px");
+      var video = portada.querySelector("video");
+      if (!amplia.matches) {
+        [textoPortada, figPortada, franja].forEach(function (el) {
+          if (el) { el.style.transform = ""; el.style.opacity = ""; }
+        });
+        portada.style.visibility = "";
+        if (pildora) pildora.classList.remove("bd-float-arriba");
+        if (tapada && video && video.paused) video.play().catch(function () {});
+        tapada = false;
+        return;
+      }
+      var hojaArriba = cortina.getBoundingClientRect().top;
+      var p = Math.min(Math.max(1 - (hojaArriba - alto) / portada.offsetHeight, 0), 1);
+      var escala = (1 - p * 0.06).toFixed(3);
+      var opacidad = Math.max(1 - p * 0.9, 0).toFixed(3);
+      textoPortada.style.transform = figPortada.style.transform = "scale(" + escala + ")";
+      textoPortada.style.opacity = figPortada.style.opacity = opacidad;
+      if (franja) franja.style.opacity = Math.max(1 - window.scrollY / 120, 0).toFixed(3);
+      if (pildora) pildora.classList.toggle("bd-float-arriba", window.scrollY < 120);
+      var cubre = hojaArriba <= alto;
+      if (cubre !== tapada) {
+        tapada = cubre;
+        portada.style.visibility = cubre ? "hidden" : "";
+        if (video) {
+          if (cubre) video.pause();
+          else video.play().catch(function () {});
+        }
+      }
+    };
+    var pidePortada = false;
+    var agendaPortada = function () {
+      if (pidePortada) return;
+      pidePortada = true;
+      requestAnimationFrame(function () { pidePortada = false; pintaPortada(); });
+    };
+    window.addEventListener("scroll", agendaPortada, { passive: true });
+    window.addEventListener("resize", agendaPortada);
+    pintaPortada();
+  }
 
   // Sombra de la barra al bajar
   var barra = document.querySelector(".bd-nav");
@@ -462,10 +556,14 @@
   // artículos ni lo que ya se ve al cargar la página.
   var rejilla = /(^|\s)bd-(2|3|4|hero)(\s|$)/;
   var objetivos = [];
+  // En celular no hay aparición (25-sep-2026): quien baja rápido veía bloques
+  // vacíos. Solo se conserva el llenado de la línea de los pasos
+  var movil = window.matchMedia("(max-width: 640px)").matches;
 
   function agrega(el, i) {
     if (el.closest(".bd-post") && !el.classList.contains("bd-post")) return;
     if (el.closest(".bd-pasos-scroll")) return;
+    if (movil && !el.classList.contains("bd-linea")) return;
     // Lo que ya está en pantalla al cargar se muestra de inmediato
     if (el.getBoundingClientRect().top < window.innerHeight * 0.92) return;
     el.classList.add("bd-rev");
@@ -507,7 +605,7 @@
       el.addEventListener("transitionend", limpia);
       setTimeout(limpia, 1600);
     });
-  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+  }, { rootMargin: movil ? "0px 0px -8% 0px" : "0px 0px 8% 0px", threshold: 0 });
 
   objetivos.forEach(function (el) { observador.observe(el); });
 })();
