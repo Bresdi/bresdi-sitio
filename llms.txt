@@ -1,0 +1,33 @@
+# Bresdi
+
+> Bresdi es una empresa de Querétaro, México, que resuelve trámites administrativos y contables para empresas: registro REPSE ante la STPS, informes ICSOE y SISUB y renovación del REPSE, trámites ante el SAT, cumplimiento de la NOM-035 y capacitaciones con constancia DC3. Atiende Santiago de Querétaro, El Marqués, Corregidora y San Juan del Río. Los trámites ante la STPS y el SAT se hacen en línea con la e.firma de la empresa cliente.
+
+Datos clave:
+
+- Registro REPSE: desde $5,000 MXN más IVA para empresas de hasta 10 trabajadores con su situación ante el SAT, el IMSS y el INFONAVIT en orden. La revisión de viabilidad no tiene costo. El trámite ante la STPS no tiene costo de gobierno.
+- Plazo de la STPS para resolver el registro REPSE: hasta 20 días hábiles. El registro dura 3 años.
+- Horario de atención: lunes a viernes de 9:00 a 17:00.
+- Contacto: bruno@bresdi.com y WhatsApp desde cualquier página del sitio.
+
+## Servicios
+
+- [Registro REPSE en Querétaro](https://bresdi.com/repse.html): gestión del registro ante la STPS, desde la revisión de viabilidad hasta el aviso de registro.
+- [Cumplimiento REPSE](https://bresdi.com/cumplimiento-repse.html): informativas cuatrimestrales ICSOE ante el IMSS y SISUB ante el INFONAVIT, y renovación del registro cada tres años.
+- [Cumplimiento NOM-035](https://bresdi.com/nom-035.html): cuestionarios oficiales, informe de diagnóstico con cédula profesional, plan de acción y carpeta de evidencia. Precio cerrado por centro de trabajo.
+- [Trámites ante el SAT](https://bresdi.com/tramites-sat.html): cambio de domicilio fiscal, actualización de actividades y obligaciones, e.firma y aclaración de sellos digitales restringidos.
+- [Capacitación con constancia DC3](https://bresdi.com/capacitaciones.html): cursos de seguridad industrial, protección civil y normas de la STPS con agentes capacitadores registrados.
+
+## Artículos
+
+- [Tu cliente te pide REPSE y no lo tienes: qué hacer esta semana](https://bresdi.com/articulos/cliente-pide-repse.html)
+- [REPSE: los documentos que te van a pedir y dónde se atoran las empresas](https://bresdi.com/articulos/documentos-repse.html)
+- [ICSOE y SISUB: el informe cuatrimestral que casi nadie presenta a tiempo](https://bresdi.com/articulos/icsoe-sisub.html)
+- [Qué es la NOM-035 y qué te toca cumplir según el tamaño de tu empresa](https://bresdi.com/articulos/que-es-nom-035.html)
+- [Qué revisa la STPS en una inspección de NOM-035](https://bresdi.com/articulos/inspeccion-nom-035.html)
+- [DC3: para qué sirve y cuándo la autoridad te la pide](https://bresdi.com/articulos/dc3.html)
+
+## Opcional
+
+- [Preguntas frecuentes](https://bresdi.com/faq.html)
+- [Nosotros](https://bresdi.com/nosotros.html)
+- [Contacto](https://bresdi.com/contacto.html)
