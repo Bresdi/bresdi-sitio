@@ -83,6 +83,9 @@
   --gris-2: #6e7173;
   --borde: #e3e6e8;
   --borde-nav: #eceff1;
+  /* Verde de WhatsApp de marca. El blanco sobre #25d366 da 1.98 de contraste (mínimo 4.5);
+     se probó #15803d el 29-sep-2026 y Bruno lo descartó: se queda el verde de WhatsApp,
+     con excepción anotada en el checklist de pre-vuelo (punto 33) */
   --wa: #25d366;
   --wa-hover: #1ebe5b;
 }

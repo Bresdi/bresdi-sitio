@@ -303,9 +303,12 @@
   // Hero animado: la imagen fija se sustituye por un video en loop con la
   // misma imagen como póster, así que no hay salto visual mientras carga.
   // Se omite con animaciones reducidas o con ahorro de datos.
+  // Desde el 29-sep-2026 el video entra después de que la página terminó de cargar:
+  // sus 320 KB competían por la red con la fuente y los estilos y retrasaban el
+  // titular (contenido principal). Mientras, se ve la imagen fija, que es su póster.
   var imgHero = document.querySelector("img[data-video]");
   var ahorro = navigator.connection && navigator.connection.saveData;
-  if (imgHero && !reducir && !ahorro) {
+  var poneVideo = function () {
     var video = document.createElement("video");
     video.className = "bd-hero-video";
     video.muted = true;
@@ -328,10 +331,16 @@
       if (intento && intento.catch) intento.catch(function () {});
     };
     reproduce();
+    // Si la portada ya quedó tapada por la cortina, no se reproduce hasta volver a verse
+    if (getComputedStyle(video).visibility === "hidden") video.pause();
     // Si la página cargó en una pestaña oculta, arranca al volverse visible
     document.addEventListener("visibilitychange", function () {
-      if (!document.hidden && video.paused) reproduce();
+      if (!document.hidden && video.paused && getComputedStyle(video).visibility !== "hidden") reproduce();
     });
+  };
+  if (imgHero && !reducir && !ahorro) {
+    if (document.readyState === "complete") setTimeout(poneVideo, 300);
+    else window.addEventListener("load", function () { setTimeout(poneVideo, 300); });
   }
 
   if (reducir || !("IntersectionObserver" in window)) return;
