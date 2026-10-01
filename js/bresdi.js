@@ -300,8 +300,9 @@
   /* ------------------------------------------------------------ movimiento */
   var reducir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // Hero animado: la imagen fija se sustituye por un video en loop con la
-  // misma imagen como póster, así que no hay salto visual mientras carga.
+  // Hero animado: un video en loop entra con un fundido encima de la imagen
+  // fija, que se queda debajo. Antes la sustituía de golpe y en algunos
+  // navegadores se veía un parpadeo al cambiar de elemento (1-oct-2026).
   // Se omite con animaciones reducidas o con ahorro de datos.
   // Desde el 29-sep-2026 el video entra después de que la página terminó de cargar:
   // sus 320 KB competían por la red con la fuente y los estilos y retrasaban el
@@ -319,13 +320,13 @@
     video.setAttribute("playsinline", "");
     video.setAttribute("preload", "auto");
     video.setAttribute("poster", imgHero.getAttribute("src"));
-    video.setAttribute("aria-label", imgHero.getAttribute("alt"));
-    video.setAttribute("style", imgHero.getAttribute("style") || "");
+    video.setAttribute("aria-hidden", "true");  // la imagen de abajo ya lleva el texto alternativo
     var fuente = document.createElement("source");
     fuente.src = imgHero.getAttribute("data-video");
     fuente.type = "video/mp4";
     video.appendChild(fuente);
-    imgHero.replaceWith(video);
+    video.addEventListener("playing", function () { video.classList.add("bd-listo"); }, { once: true });
+    imgHero.insertAdjacentElement("afterend", video);
     var reproduce = function () {
       var intento = video.play();
       if (intento && intento.catch) intento.catch(function () {});
