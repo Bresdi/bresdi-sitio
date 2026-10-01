@@ -110,7 +110,12 @@
 }
 
 html { scroll-behavior: smooth; }
-section[id] { scroll-margin-top: 88px; }
+/* Margen de desplazamiento del tamaño de la barra fija arriba y de la píldora
+   de WhatsApp abajo. Sirve a los saltos a secciones y al recorrido con Tab, que
+   dejaba el elemento enfocado debajo de la barra o de la píldora (1-oct-2026,
+   punto 35 del checklist de pre-vuelo). Sustituye a scroll-margin-top en
+   section[id] y en los títulos de artículo: los dos se sumarían */
+html { scroll-padding-top: 88px; scroll-padding-bottom: 96px; }
 
 body {
   margin: 0;
@@ -131,7 +136,7 @@ img { max-width: 100%; }
   left: -9999px;
   top: 0;
   z-index: 50;
-  background: var(--cian);
+  background: var(--cian-texto);  /* blanco sobre #007e96: 4.69, pasa AA */
   color: #fff;
   padding: 12px 20px;
   border-radius: 0 0 12px 0;
@@ -1384,6 +1389,6 @@ main { overflow-x: clip; }
 }
 .bd-404-img { width: 100%; max-width: 360px; height: auto; justify-self: center; }
 @media (max-width: 640px) {
-  .bd-404 { grid-template-columns: 1fr; margin-bottom: 32px; }
-  .bd-404-img { order: -1; max-width: 180px; justify-self: start; }
+  .bd-404 { grid-template-columns: 1fr; margin-bottom: 32px; text-align: center; }
+  .bd-404-img { order: -1; max-width: 180px; justify-self: center; }
 }
