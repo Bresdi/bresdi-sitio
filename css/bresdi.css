@@ -776,6 +776,8 @@ main details > p { margin: -6px 0 0 !important; padding: 0 22px 18px; }
 .bd-footer-desc {
   margin: 0;
   max-width: 34ch;
+  /* Texto corrido del pie: 16 px en celular como el resto (2-oct-2026, punto 9) */
+  font-size: var(--texto-135);
 }
 .bd-footer h2 {
   font-size: 13.5px;

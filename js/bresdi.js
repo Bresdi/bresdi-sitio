@@ -244,10 +244,12 @@
   }
 
   /* ------------------------------------------------- CTA flotante en móvil
-     El círculo de WhatsApp espera a que el botón de WhatsApp del hero quede
-     detrás de la barra. Si la página no tiene ese botón en la primera
-     pantalla, aparece tras 300 px de scroll. La clase solo tiene efecto en
-     móvil (css); en escritorio la píldora se ve siempre. */
+     El círculo de WhatsApp y el botón de WhatsApp del hero nunca se ven a la
+     vez: el círculo se oculta mientras el botón está en pantalla y aparece
+     cuando sale de ella, por arriba o por abajo (2-oct-2026). Si la página no
+     tiene ese botón en la primera pantalla, aparece tras 300 px de scroll. La
+     clase solo tiene efecto en móvil (css); en escritorio la píldora se ve
+     siempre. */
   var flotante = document.querySelector(".bd-float");
   if (flotante) {
     var navFija = document.querySelector(".bd-nav");
@@ -258,17 +260,17 @@
       ctaHero = document.querySelector("main .bd-wa");
       if (ctaHero && ctaHero.getBoundingClientRect().top + window.scrollY > window.innerHeight) ctaHero = null;
     }
-    // En el Inicio en celular el botón del hero queda bajo la primera
-    // pantalla, detrás de la ilustración grande (variante B, 1-oct-2026),
-    // así que el círculo se ve desde el principio
-    var inicioCelular = document.querySelector(".bd-portada")
-      ? window.matchMedia("(max-width: 640px)")
-      : null;
+    // Safari de iOS dibuja la página detrás de su barra flotante, debajo de
+    // innerHeight (714 de 874 px en iPhone 17): el botón que asoma ahí ya se ve
+    var BAJO_LA_BARRA = 100;
     var revisaFlotante = function () {
-      var oculto = ctaHero
-        ? ctaHero.getBoundingClientRect().bottom > (navFija ? navFija.offsetHeight : 0)
-        : window.scrollY < 300;
-      if (inicioCelular && inicioCelular.matches) oculto = false;
+      var oculto;
+      if (ctaHero) {
+        var caja = ctaHero.getBoundingClientRect();
+        oculto = caja.bottom > (navFija ? navFija.offsetHeight : 0) && caja.top < window.innerHeight + BAJO_LA_BARRA;
+      } else {
+        oculto = window.scrollY < 300;
+      }
       flotante.classList.toggle("bd-float-oculto", oculto);
     };
     revisaFlotante();
