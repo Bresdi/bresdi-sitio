@@ -340,8 +340,12 @@
     });
   };
   if (imgHero && !reducir && !ahorro) {
-    if (document.readyState === "complete") setTimeout(poneVideo, 300);
-    else window.addEventListener("load", function () { setTimeout(poneVideo, 300); });
+    // Espera también a que termine la entrada del Inicio (0.75 s desde que abre
+    // la página): si el video aparece mientras la imagen todavía se desliza,
+    // no quedan alineados (1-oct-2026)
+    var espera = function () { return Math.max(300, 900 - performance.now()); };
+    if (document.readyState === "complete") setTimeout(poneVideo, espera());
+    else window.addEventListener("load", function () { setTimeout(poneVideo, espera()); });
   }
 
   if (reducir || !("IntersectionObserver" in window)) return;
