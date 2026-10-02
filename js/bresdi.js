@@ -258,10 +258,17 @@
       ctaHero = document.querySelector("main .bd-wa");
       if (ctaHero && ctaHero.getBoundingClientRect().top + window.scrollY > window.innerHeight) ctaHero = null;
     }
+    // En el Inicio en celular el botón del hero queda bajo la primera
+    // pantalla, detrás de la ilustración grande (variante B, 1-oct-2026),
+    // así que el círculo se ve desde el principio
+    var inicioCelular = document.querySelector(".bd-portada")
+      ? window.matchMedia("(max-width: 640px)")
+      : null;
     var revisaFlotante = function () {
       var oculto = ctaHero
         ? ctaHero.getBoundingClientRect().bottom > (navFija ? navFija.offsetHeight : 0)
         : window.scrollY < 300;
+      if (inicioCelular && inicioCelular.matches) oculto = false;
       flotante.classList.toggle("bd-float-oculto", oculto);
     };
     revisaFlotante();
