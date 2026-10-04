@@ -1430,3 +1430,27 @@ main { overflow-x: clip; }
   .bd-franja { animation: bd-entra-aparece .5s .28s ease-out both; }
   @media (max-width: 900px) { .bd-portada figure img { animation-name: bd-entra-crece; } }
 }
+
+/* Misión, visión y valores en Nosotros (3-oct-2026, variante B «Editorial»
+   del comparador de pruebas/). La misión va como frase grande con su idea
+   central en cian, la visión con barra cian a la izquierda y los valores en
+   lista numerada de dos columnas con filetes. El HTML lo pone
+   mision_vision_valores() en construir.py */
+.bd-mvv-etiqueta { display: block; font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--cian-texto); margin-bottom: 12px; }
+.bd-mvv-h2 { font-size: clamp(24px, 2.8vw, 36px); line-height: 1.15; font-weight: 700; margin: 0; color: var(--gris); }
+.bd-mvv p { font-size: var(--texto-155); line-height: 1.7; margin: 0; color: var(--gris-2); }
+.bd-mvv .bd-mvv-frase { font-size: clamp(21px, 2.3vw, 29px); line-height: 1.45; font-weight: 600; color: var(--gris); max-width: 42ch; }
+.bd-mvv-frase em { font-style: normal; color: var(--cian-texto); }
+.bd-mvv-vision { border-left: 3px solid var(--cian); padding: 4px 0 4px clamp(18px, 2vw, 28px); max-width: 68ch; }
+.bd-mvv .bd-mvv-vision p { font-size: 17px; color: var(--gris); }
+.bd-mvv-lista { gap: 0 56px; }
+.bd-mvv-valor { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 0 12px; border-top: 1px solid var(--borde); padding: 26px 0; }
+.bd-mvv-num { font-size: 34px; line-height: 1; font-weight: 700; color: var(--cian); }
+.bd-mvv-valor h3 { font-size: 20px; font-weight: 600; margin: 0; color: var(--gris); }
+.bd-mvv-lema { display: block; font-size: var(--texto-15); font-weight: 600; color: var(--cian-texto); margin: 2px 0 10px; }
+@media (max-width: 640px) {
+  .bd-mvv-lista { grid-template-columns: 1fr; }
+  .bd-mvv-valor { grid-template-columns: 48px minmax(0, 1fr); padding: 22px 0; }
+  .bd-mvv-num { font-size: 28px; }
+  .bd-mvv .bd-mvv-vision p { font-size: 16px; }
+}
