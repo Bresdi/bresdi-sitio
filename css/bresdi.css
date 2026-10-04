@@ -1118,10 +1118,23 @@ main { overflow-x: clip; }
      La foto va solo del 45 % hacia abajo; así se escala a ese espacio y las
      personas quedan detrás del isotipo, no detrás del texto. Arriba del 45 %
      el fondo es el blanco de la página */
-  .bd-hero-fondo::before {
-    top: 45%;
+  /* 3-oct-2026: con el texto a 16 px en celular (1-oct-2026) el texto llegó
+     al 63 % y la foto, que empezaba en un 45 % fijo, quedó detrás de él. Desde
+     entonces la foto se ancla a la figura del isotipo y no a un porcentaje de
+     la sección: empieza 48 px arriba del isotipo y llega al fondo de la
+     sección (sus 56 px de relleno), mida lo que mida el texto */
+  .bd-hero-fondo::before { content: none; }
+  .bd-hero-fondo > figure { position: relative; }
+  .bd-hero-fondo > figure::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: -48px;
+    bottom: -56px;
+    left: calc(50% - 50vw);
+    right: calc(50% - 50vw);
     background:
-      linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, .9) 18%, rgba(255, 255, 255, .42) 36%, rgba(255, 255, 255, .36) 80%, #fff 100%),
+      linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, .9) 12%, rgba(255, 255, 255, .42) 30%, rgba(255, 255, 255, .36) 80%, #fff 100%),
       url(../img/nosotros-fondo.webp) 70% 30% / cover no-repeat;
   }
   .bd-isotipo { max-width: 300px; }
