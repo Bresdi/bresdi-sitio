@@ -487,6 +487,13 @@ img { max-width: 100%; }
 @media (min-width: 1001px) {
   .bd-tile h3 { min-height: calc(1.35em * 3); }
 }
+/* Tarjetas del bloque 01 del Inicio (4-oct-2026): en pantallas medianas,
+   cuatro columnas dejan cada tarjeta en unos 250 px y los CTA se parten en
+   dos renglones; ahí van de dos en dos, con el título en dos líneas */
+@media (min-width: 1001px) and (max-width: 1299px) {
+  .bd-4:has(> .bd-tile) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bd-4 > .bd-tile h3 { min-height: calc(1.35em * 2); }
+}
 .bd-tile-desc {
   margin: 0;
   font-size: var(--texto-145);
@@ -887,48 +894,107 @@ main details > p { margin: -6px 0 0 !important; padding: 0 22px 18px; }
    (opción B, 24-sep-2026). Los plazos siguen a la izquierda porque sus
    textos son largos */
 .bd-sv-hero-datos .bd-sv-dato { align-items: center; text-align: center; }
+/* «Qué está en juego» (4-oct-2026, variante B del comparador de pruebas/):
+   sin caja, entre dos líneas finas, y cada riesgo con un ícono de alerta en
+   ámbar, el único acento cálido. Antes era una caja gris oscuro que cortaba
+   la página */
 .bd-sv-riesgo {
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   gap: 24px 48px;
   align-items: center;
-  background: var(--gris);
-  color: #fff;
-  border-radius: 24px;
-  padding: 48px clamp(24px, 4vw, 56px);
+  border-top: 1px solid var(--borde-suave);
+  border-bottom: 1px solid var(--borde-suave);
+  padding: 48px 0;
   margin: 24px 0;
+  --ico-alerta: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3'/%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");
 }
-.bd-sv-riesgo-lista { display: grid; gap: 12px; }
+.bd-sv-riesgo-lista { display: grid; }
 .bd-sv-riesgo-lista div {
-  background: rgba(255, 255, 255, .08);
-  border: 1px solid rgba(255, 255, 255, .14);
-  border-radius: 16px;
-  padding: 16px 18px;
+  position: relative;
+  border-bottom: 1px solid var(--borde-suave);
+  padding: 18px 0 18px 48px;
   font-size: var(--texto-145);
   line-height: 1.6;
-  color: rgba(255, 255, 255, .85);
+  color: var(--gris-2);
 }
-.bd-sv-riesgo-lista b { color: #fff; }
-.bd-sv-pasos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
-.bd-sv-paso {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  border-top: 3px solid var(--cian);
-  padding-top: 20px;
+.bd-sv-riesgo-lista div:last-child { border-bottom: 0; }
+.bd-sv-riesgo-lista div::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: #fdf3e2;
 }
-.bd-sv-num {
-  flex: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  background: linear-gradient(150deg, #26c0da 0%, var(--cian) 55%, var(--cian-texto) 100%);
-  color: #fff;
-  font-weight: 700;
+.bd-sv-riesgo-lista div::after {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 23px;
+  width: 18px;
+  height: 18px;
+  background: #b86e00;
+  -webkit-mask: var(--ico-alerta) center / contain no-repeat;
+  mask: var(--ico-alerta) center / contain no-repeat;
+}
+.bd-sv-riesgo-lista b { color: var(--gris); }
+/* Cómo lo hacemos: línea de tiempo (4-oct-2026, variante A del comparador
+   de pruebas/). Cada paso centrado en su columna y la línea del centro del
+   primer círculo al del último: columnas de (100% - 3 huecos de 28px) / 4 */
+.bd-sv-pasos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0 28px;
+  position: relative;
+}
+.bd-sv-pasos::before {
+  content: "";
+  position: absolute;
+  top: 27px;
+  left: calc((100% - 84px) / 8);
+  right: calc((100% - 84px) / 8);
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--borde-suave) 0%, var(--cian) 100%);
+}
+.bd-sv-pasos li { position: relative; text-align: center; }
+.bd-sv-punto {
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #fff;
+  border: 3px solid var(--cian);
+  color: var(--cian-texto);
+  font-size: 20px;
+  font-weight: 700;
+  box-shadow: 0 0 0 8px #fff;
 }
+/* Lo que recibe el cliente: relleno plano y nítido, sin sombra difusa */
+.bd-sv-pasos li:last-child .bd-sv-punto { background: var(--cian); color: #fff; }
+.bd-sv-etq {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--cian-texto);
+  margin: 22px 0 6px;
+}
+.bd-sv-pasos li:last-child .bd-sv-etq { color: #fff; background: var(--cian-texto); padding: 3px 10px; border-radius: 999px; }
+.bd-sv-pasos h3 { font-size: 17px; font-weight: 600; line-height: 1.35; margin: 0; color: var(--gris); }
+.bd-sv-pasos p { font-size: var(--texto-15); line-height: 1.6; max-width: 30ch; margin: 8px auto 0; color: var(--gris-2); }
 .bd-sv-precio {
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
@@ -967,11 +1033,25 @@ main details > p { margin: -6px 0 0 !important; padding: 0 22px 18px; }
 /* Preguntas del área a todo el ancho; la respuesta conserva un largo de línea legible */
 .bd-sv-preguntas { display: grid; gap: 12px; }
 .bd-sv-preguntas details p { max-width: 75ch; }
-@media (max-width: 1000px) {
-  .bd-sv-pasos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
 @media (max-width: 860px) {
   .bd-sv-riesgo, .bd-sv-precio { grid-template-columns: 1fr; }
+  /* Línea de tiempo vertical a la izquierda; cada tramo une un círculo con el siguiente */
+  .bd-sv-pasos { grid-template-columns: 1fr; }
+  .bd-sv-pasos::before { display: none; }
+  .bd-sv-pasos li { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 0 18px; padding-bottom: 28px; text-align: left; }
+  .bd-sv-pasos li:last-child { padding-bottom: 0; }
+  .bd-sv-pasos li:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 26.5px;
+    top: 56px;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--borde-suave) 0%, var(--cian) 100%);
+  }
+  .bd-sv-punto { margin: 0; }
+  .bd-sv-etq { margin-top: 4px; }
+  .bd-sv-pasos p { max-width: none; margin-left: 0; }
   .bd-sv-hero-datos { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
   .bd-sv-dato { padding: 16px 14px; border-radius: 16px; }
   .bd-sv-valor { font-size: 22px; }
@@ -981,28 +1061,7 @@ main details > p { margin: -6px 0 0 !important; padding: 0 22px 18px; }
   .bd-sv-hero-datos .bd-sv-dato { padding: 14px 10px; }
   .bd-sv-hero-datos .bd-sv-valor { font-size: 19px; }
 }
-/* Móvil: número a la izquierda, título y texto a la derecha, unidos por una línea */
 @media (max-width: 640px) {
-  .bd-sv-pasos { grid-template-columns: 1fr; gap: 0; }
-  .bd-sv-paso {
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 16px;
-    border-top: 0;
-    padding: 0 0 28px;
-    position: relative;
-  }
-  .bd-sv-paso:not(:last-child)::before {
-    content: "";
-    position: absolute;
-    left: 17px;
-    top: 44px;
-    bottom: 6px;
-    width: 2px;
-    border-radius: 2px;
-    background: var(--borde-suave);
-  }
-  .bd-sv-paso h3 { margin-top: 6px !important; }
   .bd-sv-alcance { grid-template-columns: 1fr; }
 }
 
@@ -1123,21 +1182,47 @@ main { overflow-x: clip; }
      entonces la foto se ancla a la figura del isotipo y no a un porcentaje de
      la sección: empieza 48 px arriba del isotipo y llega al fondo de la
      sección (sus 56 px de relleno), mida lo que mida el texto */
+  /* 4-oct-2026 (variante A del comparador de pruebas/): en celular la foto de
+     fondo se estiraba (1536 × 1024 de origen para unos 1200 × 1300 px reales
+     en un iPhone) y el velo la lavaba. Ahora va como tarjeta nítida, sin velo,
+     con un recorte propio centrado en las personas (img/nosotros-movil.webp,
+     1016 × 762) */
   .bd-hero-fondo::before { content: none; }
   .bd-hero-fondo > figure { position: relative; }
   .bd-hero-fondo > figure::before {
     content: "";
     position: absolute;
     z-index: -1;
-    top: -48px;
-    bottom: -56px;
-    left: calc(50% - 50vw);
-    right: calc(50% - 50vw);
-    background:
-      linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, .9) 12%, rgba(255, 255, 255, .42) 30%, rgba(255, 255, 255, .36) 80%, #fff 100%),
-      url(../img/nosotros-fondo.webp) 70% 30% / cover no-repeat;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 250px;
+    border-radius: 22px;
+    background: url(../img/nosotros-movil.webp) 60% 45% / cover no-repeat;
+    box-shadow: 0 16px 36px rgba(0, 60, 75, .16);
   }
-  .bd-isotipo { max-width: 300px; }
+  /* El isotipo va completo dentro de un sello blanco, montado a la mitad del
+     borde inferior de la tarjeta (variante D). El círculo se dibuja aparte,
+     detrás de la imagen: con border-radius y padding en la propia imagen, el
+     navegador recortaba las puntas del isotipo */
+  .bd-hero-fondo > figure::after {
+    content: "";
+    position: absolute;
+    top: 197px;
+    left: 50%;
+    width: 106px;
+    height: 106px;
+    margin-left: -53px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 10px 26px rgba(0, 60, 75, .2);
+  }
+  .bd-isotipo {
+    position: relative;
+    z-index: 1;
+    width: 58px;
+    margin: 219px auto 0;
+  }
 }
 
 /* Video del hero: el blanco del video se funde con el de la página aunque la
