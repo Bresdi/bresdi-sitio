@@ -1152,77 +1152,22 @@ main details > p { margin: -6px 0 0 !important; padding: 0 22px 18px; }
 
 /* La ilustración del hero ya no flota (1-oct-2026): el video no flotaba y, al
    entrar, la imagen brincaba hasta 10 px a su lugar. El movimiento lo da el video */
-/* Hero de Nosotros (24-sep-2026): foto de oficina aclarada detrás, a todo el
-   ancho de la ventana. Se desvanece a blanco del lado del texto; en una
-   columna, de arriba hacia abajo. main recorta el desborde de los 100vw */
+/* Hero de Nosotros (4-oct-2026, variante A del comparador de pruebas/): la
+   ilustración clay del equipo como tarjeta a la derecha del texto en
+   escritorio y debajo en celular. Sustituye la foto de oficina con el isotipo
+   3D (24-sep-2026), que no le gustó a Perla. Imagen generada en ChatGPT con
+   los personajes del hero y el isotipo en las tazas */
 main { overflow-x: clip; }
-.bd-hero-fondo { position: relative; isolation: isolate; }
-.bd-hero-fondo::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  bottom: 0;
-  left: calc(50% - 50vw);
-  right: calc(50% - 50vw);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0) 78%, #fff 100%),
-    linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, .94) 38%, rgba(255, 255, 255, .7) 66%, rgba(255, 255, 255, .58) 100%),
-    url(../img/nosotros-fondo.webp) center right / cover no-repeat;
+.bd-equipo {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 24px;
+  box-shadow: 0 18px 40px rgba(0, 60, 75, .16);
 }
-.bd-isotipo { display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto; }
+.bd-hero-equipo > figure { margin: 0; align-self: center; }
 @media (max-width: 1000px) {
-  /* Calibrado el 24-sep-2026: el texto termina entre el 47 y el 56 % del alto
-     de la sección (360 a 800 px de ancho) y el isotipo ocupa del 53 al 94 %.
-     La foto va solo del 45 % hacia abajo; así se escala a ese espacio y las
-     personas quedan detrás del isotipo, no detrás del texto. Arriba del 45 %
-     el fondo es el blanco de la página */
-  /* 3-oct-2026: con el texto a 16 px en celular (1-oct-2026) el texto llegó
-     al 63 % y la foto, que empezaba en un 45 % fijo, quedó detrás de él. Desde
-     entonces la foto se ancla a la figura del isotipo y no a un porcentaje de
-     la sección: empieza 48 px arriba del isotipo y llega al fondo de la
-     sección (sus 56 px de relleno), mida lo que mida el texto */
-  /* 4-oct-2026 (variante A del comparador de pruebas/): en celular la foto de
-     fondo se estiraba (1536 × 1024 de origen para unos 1200 × 1300 px reales
-     en un iPhone) y el velo la lavaba. Ahora va como tarjeta nítida, sin velo,
-     con un recorte propio centrado en las personas (img/nosotros-movil.webp,
-     1016 × 762) */
-  .bd-hero-fondo::before { content: none; }
-  .bd-hero-fondo > figure { position: relative; }
-  .bd-hero-fondo > figure::before {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 250px;
-    border-radius: 22px;
-    background: url(../img/nosotros-movil.webp) 60% 45% / cover no-repeat;
-    box-shadow: 0 16px 36px rgba(0, 60, 75, .16);
-  }
-  /* El isotipo va completo dentro de un sello blanco, montado a la mitad del
-     borde inferior de la tarjeta (variante D). El círculo se dibuja aparte,
-     detrás de la imagen: con border-radius y padding en la propia imagen, el
-     navegador recortaba las puntas del isotipo */
-  .bd-hero-fondo > figure::after {
-    content: "";
-    position: absolute;
-    top: 197px;
-    left: 50%;
-    width: 106px;
-    height: 106px;
-    margin-left: -53px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 10px 26px rgba(0, 60, 75, .2);
-  }
-  .bd-isotipo {
-    position: relative;
-    z-index: 1;
-    width: 58px;
-    margin: 219px auto 0;
-  }
+  .bd-hero-equipo > figure { margin-top: 8px; }
 }
 
 /* Video del hero: el blanco del video se funde con el de la página aunque la
