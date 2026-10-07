@@ -1497,3 +1497,87 @@ main { overflow-x: clip; }
   .bd-mvv-num { font-size: 28px; }
   .bd-mvv .bd-mvv-vision p { font-size: 16px; }
 }
+
+/* Portada de página de destino (7-oct-2026, variante F del comparador de
+   pruebas/). Hoy solo en repse.html, la página del anuncio; la pone
+   portada() en construir-servicios.py con la clave «portada». Bloque cian a
+   todo el ancho, texto centrado y precio, revisión sin costo y botón en la
+   primera pantalla. Sin animación de entrada: esa queda solo en el Inicio.
+   Alto todo o nada: el cian llega al borde de la pantalla o deja ver al
+   menos 150 px de la sección siguiente; una franja blanca delgada con texto
+   cortado se ve como error. El tope de 820 px entra solo cuando sobra
+   pantalla para ese asomo: 820 + 63 de menú + 150 = 1033 px. bresdi.js
+   publica --nav-alto en todas las páginas; el respaldo es la medida real
+   del menú, 63 px y 73 en celular */
+.bd-pt {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  min-height: calc(100svh - var(--nav-alto, 63px));
+  padding: 40px 0;
+  color: #fff;
+}
+/* Blanco sobre #007e96 da 4.69 (AA) */
+.bd-pt::before { content: ""; position: absolute; inset: 0 -50vw; z-index: -1; background: linear-gradient(150deg, var(--cian-texto) 0%, var(--cian-hover) 100%); }
+@media (min-height: 1033px) { .bd-pt { min-height: 820px; } }
+.bd-pt-texto { max-width: 1000px; display: flex; flex-direction: column; align-items: center; }
+.bd-pt-etq { display: block; font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(255, 255, 255, .85); margin-bottom: 16px; }
+.bd-pt h1 { font-size: clamp(36px, 5.2vw, 66px); line-height: 1.08; font-weight: 700; margin: 0; color: #fff; letter-spacing: -.015em; text-wrap: balance; max-width: 18ch; }
+.bd-pt-claro { color: #9fe3ef; }
+.bd-pt-bajada { font-size: 17px; line-height: 1.6; max-width: 54ch; margin: 20px auto 0; color: rgba(255, 255, 255, .92); }
+.bd-pt-precio { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 10px; margin-top: 24px; padding: 10px 18px; border-radius: 999px; background: #fff; box-shadow: 0 10px 24px rgba(0, 40, 50, .25); font-size: 15px; color: var(--gris-2); }
+.bd-pt-precio em { font-style: normal; }
+.bd-pt-precio b { font-size: 18px; color: var(--gris); }
+.bd-pt-precio i { width: 1px; height: 18px; background: var(--borde-suave); }
+.bd-pt-precio span { color: var(--cian-texto); font-weight: 600; }
+.bd-pt-acciones { display: flex; justify-content: center; margin-top: 24px; }
+.bd-pt-boton { padding: 18px 32px; font-size: 17px; box-shadow: 0 12px 28px rgba(37, 211, 102, .35); }
+.bd-pt-datos { list-style: none; margin: 28px 0 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 0; }
+.bd-pt-datos li { padding: 0 20px; border-left: 1px solid rgba(255, 255, 255, .25); font-size: 14px; color: rgba(255, 255, 255, .85); }
+.bd-pt-datos li:first-child { padding-left: 0; border-left: 0; }
+.bd-pt-datos b { font-size: 16px; color: #fff; }
+.bd-pt-zona { margin-top: 18px; font-size: 13.5px; color: rgba(255, 255, 255, .85); text-wrap: balance; }
+/* Indicador de que hay más abajo, al pie del bloque. Mismo lenguaje que
+   «Desliza para conocer más» del Inicio, en vertical y en blanco. La línea
+   solo se mueve con bd-js, que respeta «Reducir movimiento» */
+.bd-pt { padding-bottom: 96px; }
+.bd-pt-mas { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; color: rgba(255, 255, 255, .8); }
+.bd-pt-mas i { display: block; position: relative; width: 2px; height: 30px; border-radius: 2px; background: rgba(255, 255, 255, .25); overflow: hidden; }
+.bd-js .bd-pt-mas i::after { content: ""; position: absolute; inset: 0; background: #fff; transform: translateY(-100%); animation: bd-pt-baja 2.2s ease-in-out infinite; }
+@keyframes bd-pt-baja { 0% { transform: translateY(-100%); } 60%, 100% { transform: translateY(100%); } }
+/* En escritorio el botón del hero y la píldora flotante no se ven a la vez:
+   la píldora espera a que el botón salga de pantalla, como ya pasa en
+   celular (js/bresdi.js pone bd-float-oculto) */
+body:has(.bd-pt) .bd-wa.bd-float { transition: background .15s, transform .25s, box-shadow .15s, opacity .25s, visibility .25s; }
+body:has(.bd-pt) .bd-float.bd-float-oculto { opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(12px); }
+/* Laptops bajas: se compacta el texto para que el bloque completo quepa */
+@media (min-width: 641px) and (max-height: 820px) {
+  .bd-pt { padding: 24px 0 84px; }
+  .bd-pt h1 { font-size: clamp(34px, 6.6vh, 54px); }
+  .bd-pt-etq { margin-bottom: 12px; }
+  .bd-pt-bajada { margin-top: 14px; }
+  .bd-pt-precio, .bd-pt-acciones { margin-top: 18px; }
+  .bd-pt-datos { margin-top: 20px; }
+  .bd-pt-zona { margin-top: 12px; }
+}
+@media (max-width: 1000px) {
+  .bd-pt { padding: 48px 0 104px; }
+}
+@media (max-width: 640px) {
+  .bd-pt { min-height: calc(100svh - var(--nav-alto, 73px)); padding: 28px 0 96px; }
+  .bd-pt h1 { font-size: 33px; }
+  .bd-pt-bajada { font-size: 16px; margin-top: 14px; }
+  .bd-pt-precio { flex-direction: column; gap: 2px; border-radius: 18px; margin-top: 18px; font-size: 14px; padding: 8px 14px; }
+  .bd-pt-precio b { font-size: 16px; }
+  .bd-pt-precio i { display: none; }
+  .bd-pt-acciones { width: 100%; margin-top: 18px; }
+  .bd-pt-datos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+  .bd-pt-datos li { padding: 0 6px; font-size: 12.5px; line-height: 1.35; }
+  .bd-pt-datos li:first-child { padding-left: 6px; }
+  .bd-pt-datos li span { display: block; }
+  .bd-pt-datos b { font-size: 15px; }
+}

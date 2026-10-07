@@ -8,6 +8,18 @@
 (function () {
   "use strict";
 
+  /* ------------------------------------------------- altura del menú
+     Los heros que llenan la pantalla restan la barra del alto visible con
+     --nav-alto. Antes solo la publicaba la portada del Inicio (7-oct-2026) */
+  var barraMenu = document.querySelector(".bd-nav");
+  if (barraMenu) {
+    var publicaAltoMenu = function () {
+      document.documentElement.style.setProperty("--nav-alto", barraMenu.offsetHeight + "px");
+    };
+    publicaAltoMenu();
+    window.addEventListener("resize", publicaAltoMenu);
+  }
+
   /* ---------------------------------------------------------- menú móvil */
   var boton = document.querySelector(".bd-menu-btn");
   var menu = document.getElementById("bd-menu");
