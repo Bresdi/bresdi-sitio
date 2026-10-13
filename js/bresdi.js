@@ -318,6 +318,30 @@
     lista.parentNode.insertBefore(boton, lista);
   });
 
+  /* ------------------------------------------------ analítica de Cloudflare
+     En el Inicio, Cloudflare no la inyecta (regla de configuración de la zona,
+     13-oct-2026): pedida en el HTML con prioridad alta, a veces terminaba antes
+     del primer pintado y la simulación de celular la contaba como necesaria
+     para dibujar. Aquí se pide al terminar la carga, dos cuadros después, igual
+     que la etiqueta de Google. Solo en el dominio publicado y solo si la página
+     no la trae ya, para no contar doble. La configuración va completa: sin
+     "version", el envío va a otro dominio y lo rechaza */
+  var CF_ANALITICA = '{"version":"2024.11.0","token":"d806a16ffb8c4495b6e7747c12cdf4a6","r":1,"spa":2}';
+  var pideAnalitica = function () {
+    if (location.hostname !== "bresdi.com") return;
+    if (document.querySelector("script[data-cf-beacon]")) return;
+    var s = document.createElement("script");
+    s.defer = true;
+    s.src = "https://static.cloudflareinsights.com/beacon.min.js";
+    s.setAttribute("data-cf-beacon", CF_ANALITICA);
+    document.head.appendChild(s);
+  };
+  var trasPintar = function () {
+    requestAnimationFrame(function () { requestAnimationFrame(pideAnalitica); });
+  };
+  if (document.readyState === "complete") trasPintar();
+  else window.addEventListener("load", trasPintar);
+
   /* ------------------------------------------------------------ movimiento */
   var reducir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
