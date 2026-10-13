@@ -328,6 +328,8 @@
   // Desde el 29-sep-2026 el video entra después de que la página terminó de cargar:
   // sus 320 KB competían por la red con la fuente y los estilos y retrasaban el
   // titular (contenido principal). Mientras, se ve la imagen fija, que es su póster.
+  // El video nunca puede medir más que la imagen: si Chrome lo cuenta más grande,
+  // lo toma como contenido principal al aparecer (13-oct-2026, css .bd-hero-video)
   var imgHero = document.querySelector("img[data-video]");
   var ahorro = navigator.connection && navigator.connection.saveData;
   var poneVideo = function () {

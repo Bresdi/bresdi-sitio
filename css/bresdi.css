@@ -1174,13 +1174,18 @@ main { overflow-x: clip; }
    compresión lo altere un par de tonos */
 /* El video del hero entra encima de la imagen fija con un fundido corto
    (1-oct-2026). Sin mix-blend-mode: con el fundido, multiplicar el video por
-   la imagen de abajo oscurecía el hero mientras aparecía */
+   la imagen de abajo oscurecía el hero mientras aparecía.
+   El video queda 1 px por lado más chico que la imagen (13-oct-2026): a la
+   misma medida, Chrome lo cuenta 2 px más grande por su capa propia, lo toma
+   como contenido principal (LCP) y lo marca hasta que aparece, después de
+   cargar la página. Con 1 px menos la imagen sigue siendo el contenido
+   principal en celular y escritorio */
 .bd-portada figure { position: relative; }
 .bd-hero-video {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  inset: 1px;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
   object-fit: contain;
   background: #fff;
   opacity: 0;
@@ -1457,11 +1462,16 @@ main { overflow-x: clip; }
    Nada arranca invisible: Chrome no cuenta como pintado un elemento en
    opacidad 0 y retrasaría el contenido principal (LCP). Solo se mueven
    posición, escala y opacidad, en menos de 0.8 s. Con «Reducir movimiento»
-   no hay entrada */
+   no hay entrada.
+   La ilustración del hero no puede pintarse más chica ni más recortada por
+   la orilla de la pantalla que el video que entra encima (13-oct-2026): Chrome
+   cambia el contenido principal al elemento más grande y tomaba el video, que
+   aparece después de cargar la página (LCP de 4.3 s en celular). Por eso en
+   celular entra solo con fundido: con escala arrancaba al 96 % y, al subir
+   desde abajo, en pantallas bajas quedaba más recortada que el video */
 @media (prefers-reduced-motion: no-preference) {
   @keyframes bd-entra-sube { from { opacity: .35; transform: translateY(var(--bd-d, 14px)); } to { opacity: 1; transform: none; } }
   @keyframes bd-entra-aparece { from { opacity: .35; } to { opacity: 1; } }
-  @keyframes bd-entra-crece { from { opacity: .35; transform: scale(.96); } to { opacity: 1; transform: none; } }
   @keyframes bd-entra-lado { from { opacity: .35; transform: translateX(32px); } to { opacity: 1; transform: none; } }
   @keyframes bd-entra-baja { from { opacity: .35; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
   body:has(.bd-portada) .bd-nav { animation: bd-entra-baja .55s ease-out both; }
@@ -1471,7 +1481,7 @@ main { overflow-x: clip; }
   .bd-portada > div:first-child > div { --bd-d: 22px; animation: bd-entra-sube .55s .2s cubic-bezier(.16, .8, .24, 1) both; }
   .bd-portada figure img { animation: bd-entra-lado .65s .1s cubic-bezier(.16, .8, .24, 1) both; }
   .bd-franja { animation: bd-entra-aparece .5s .28s ease-out both; }
-  @media (max-width: 900px) { .bd-portada figure img { animation-name: bd-entra-crece; } }
+  @media (max-width: 900px) { .bd-portada figure img { animation-name: bd-entra-aparece; } }
 }
 
 /* Misión, visión y valores en Nosotros (3-oct-2026, variante B «Editorial»
