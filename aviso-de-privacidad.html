@@ -36,10 +36,10 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
 if(a)gtag('event','conversion',{send_to:'AW-18494824658/oatiCMydx5EdENLBgvNE',value:1.0,currency:'MXN'});});
 (function(){var anuncio=/[?&](gclid|gbraid|wbraid)=/.test(location.search);
 try{if(anuncio)sessionStorage.setItem('bd-origen','anuncio');else anuncio=sessionStorage.getItem('bd-origen')==='anuncio';}catch(e){}
-if(!anuncio)return;var marca="(Vi su anuncio en Google)";
+if(!anuncio)return;var marca="Hola, quiero que me ayuden a",mensajes={"Hola Bresdi, quiero cotizar el registro REPSE para mi empresa.": "Hola, quiero que me ayuden a tramitar el registro REPSE de mi empresa.", "Hola Bresdi, quiero información sobre el REPSE.": "Hola, quiero que me ayuden a saber si mi empresa necesita el REPSE.", "Hola Bresdi, quiero cotizar el cumplimiento de mi REPSE: informes ICSOE y SISUB y renovación.": "Hola, quiero que me ayuden a cumplir con los informes ICSOE y SISUB y la renovación de mi REPSE.", "Hola Bresdi, quiero cotizar el cumplimiento de la NOM-035.": "Hola, quiero que me ayuden a cumplir con la NOM-035 en mi empresa.", "Hola Bresdi, necesito ayuda con un trámite ante el SAT.": "Hola, quiero que me ayuden a resolver un trámite ante el SAT.", "Hola Bresdi, me interesan sus cursos con constancia DC3.": "Hola, quiero que me ayuden a capacitar a mi personal con constancia DC3.", "Hola Bresdi, quiero información sobre sus servicios.": "Hola, quiero que me ayuden a ver qué servicio necesita mi empresa."},generico="Hola, quiero que me ayuden a ver qué servicio necesita mi empresa.";
 document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('a[href*="wa.me/"]').forEach(function(a){
-var u=new URL(a.href),t=u.searchParams.get('text')||'';if(t.indexOf(marca)>=0)return;
-a.href=u.origin+u.pathname+'?text='+encodeURIComponent((t+' '+marca).trim());});});})();
+var u=new URL(a.href),t=u.searchParams.get('text')||'';if(t.indexOf(marca)===0)return;
+a.href=u.origin+u.pathname+'?text='+encodeURIComponent(mensajes[t]||generico);});});})();
 </script>
 </head>
 <body>
@@ -78,7 +78,7 @@ a.href=u.origin+u.pathname+'?text='+encodeURIComponent((t+' '+marca).trim());});
     <span style="display:inline-block;font-size:12.5px;font-weight:600;color:#007e96;letter-spacing:.04em;text-transform:uppercase;margin-bottom:14px">Legal</span>
     <h1 style="font-size:clamp(30px,3.6vw,46px);line-height:1.12;font-weight:700;margin:0;color:#555555;letter-spacing:-.01em">Aviso de privacidad</h1>
     <p style="font-size:18px;line-height:1.6;margin:20px 0 0;color:#6e7173">Cómo tratamos los datos personales que nos compartes por este sitio, por WhatsApp y por correo, conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares.</p>
-    <div style="margin-top:24px;padding-top:20px;border-top:1px solid #e3e6e8;font-size:13.5px;color:#6e7173">Última actualización: 5 de octubre de 2026</div>
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid #e3e6e8;font-size:13.5px;color:#6e7173">Última actualización: 16 de octubre de 2026</div>
     <article class="bd-legal">
       <h2 id="responsable" style="font-size:22px;line-height:1.3;font-weight:600;margin:44px 0 12px;color:#555555">Quién es responsable de tus datos</h2>
       <p style="font-size:16.5px;line-height:1.75;margin:0 0 14px;color:#5f6264">BRESDI, S.A. de C.V., en adelante Bresdi, con domicilio en Valle de Acantha 84, Int. 51, Zibatá, El Marqués, Querétaro, C.P. 76269, es responsable del tratamiento de los datos personales que nos compartes. Para cualquier tema relacionado con este aviso, escríbenos a <a href="mailto:bruno@bresdi.com">bruno@bresdi.com</a>.</p>
@@ -101,7 +101,7 @@ a.href=u.origin+u.pathname+'?text='+encodeURIComponent((t+' '+marca).trim());});
       <h2 id="cookies" style="font-size:22px;line-height:1.3;font-weight:600;margin:44px 0 12px;color:#555555">Cookies y analítica</h2>
       <p style="font-size:16.5px;line-height:1.75;margin:0 0 14px;color:#5f6264">Para saber cuántas personas visitan el sitio usamos Cloudflare Web Analytics, que no usa cookies ni guarda nada en tu navegador y no identifica a las personas: registra de forma agregada las páginas vistas, el sitio desde el que llegaste, el país, el tipo de dispositivo y navegador, y los tiempos de carga.</p>
       <p style="font-size:16.5px;line-height:1.75;margin:0 0 14px;color:#5f6264">Para medir nuestros anuncios usamos la etiqueta de Google Ads. Guarda en tu navegador cookies propias de este sitio y, si llegaste por uno de nuestros anuncios, el identificador de ese clic. Con eso Google nos dice cuántas visitas de los anuncios presionaron el botón de WhatsApp. No la usamos para mostrarte anuncios en otros sitios ni para armar perfiles de las personas, y tenemos apagada la personalización de anuncios.</p>
-      <p style="font-size:16.5px;line-height:1.75;margin:0 0 14px;color:#5f6264">Si llegaste por un anuncio, el mensaje que se abre en WhatsApp incluye la frase «(Vi su anuncio en Google)» para que sepamos de dónde vino tu consulta. Puedes borrarla antes de enviar.</p>
+      <p style="font-size:16.5px;line-height:1.75;margin:0 0 14px;color:#5f6264">Si llegaste por un anuncio, el mensaje que se abre en WhatsApp empieza con «Hola, quiero que me ayuden a…» para que sepamos de dónde vino tu consulta. Puedes cambiarlo antes de enviar.</p>
       <p style="font-size:16.5px;line-height:1.75;margin:0 0 14px;color:#5f6264">Al abrir el sitio, tu navegador se conecta con Cloudflare, que lo entrega, y con Google, que carga la etiqueta. Los dos reciben datos técnicos como tu dirección IP y el tipo de navegador. Puedes borrar o bloquear las cookies desde la configuración de tu navegador; el sitio funciona igual sin ellas.</p>
       <h2 id="derechos" style="font-size:22px;line-height:1.3;font-weight:600;margin:44px 0 12px;color:#555555">Tus derechos</h2>
       <p style="font-size:16.5px;line-height:1.75;margin:0 0 14px;color:#5f6264">Puedes acceder a tus datos, rectificarlos si están mal, cancelarlos cuando ya no sean necesarios y oponerte a su uso para un fin específico. Para hacerlo, escríbenos a <a href="mailto:bruno@bresdi.com">bruno@bresdi.com</a> con:</p>
